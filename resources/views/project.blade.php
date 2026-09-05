@@ -1,8 +1,10 @@
 @extends('layouts.app')
 @section('title', 'Rencana Proyek Agentic AI')
 @section('content')
-<p class="eyebrow muted">Usulan tema kelompok</p><h1>{{ $profil['tema'] }}</h1>
+<p class="eyebrow muted">W1 · {{ $profil['ai']['fase'] }}</p><h1>{{ $profil['tema'] }}</h1>
 <p class="lead my-4">{{ $profil['deskripsi'] }}</p>
-<article class="card p-4"><h2 class="h4">Rancangan alur</h2><ol class="mb-0"><li>Pengguna memilih database yang berwenang diperiksa.</li><li>Tool membaca metrik dan hasil pemeriksaan melalui akses read-only.</li><li>LLM merangkum temuan dan mengusulkan perbaikan.</li><li>Pengguna meninjau rekomendasi sebelum melakukan perubahan.</li></ol></article>
-<p class="muted mt-4">Rencana teknologi: Laravel, Livewire, Ollama atau Senopati AI, dan NativePHP. Halaman ini merupakan rancangan awal; integrasi AI dikerjakan pada proyek akhir.</p>
+<article class="card p-4 mb-4"><h2 class="h4">Berangkat dari Saran Narafin</h2><p>Pada Analitika Pemain Cashflowpoly, setiap indikator memiliki penjelasan dan saran. Rencana AI ini menghubungkan beberapa indikator agar pemain memahami penyebab hasilnya dan langkah permainan berikutnya.</p><p class="mb-0">Contoh: kas menurun sementara bahan masih tersisa. Saran perlu mengarahkan pemain memakai persediaan untuk pesanan, sambil meninjau pengeluaran.</p></article>
+<article class="card p-4"><h2 class="h4">Rancangan alur</h2><ol class="mb-0"><li>Pilih pemain, sesi, dan mode Pemula atau Mahir.</li><li>Aplikasi menghitung metrik dari catatan permainan; data kosong tetap ditandai belum tersedia.</li><li>LLM direncanakan merangkai bukti kas, bahan, dan pinjaman menjadi saran kontekstual.</li><li>Instruktur meninjau saran sebelum membahas strategi bersama pemain.</li></ol></article>
+<div class="alert alert-info mt-4" role="status"><strong>Capaian W1:</strong> {{ $profil['ai']['capaian'] }} Tahap berikutnya: skenario saran berdasarkan mode pada W2.</div>
+<p class="muted">Tahap ini baru rancangan. Integrasi LLM belum berjalan. Referensi: <a href="{{ $profil['ai']['sumber'] }}" target="_blank" rel="noopener">Narafin · Analitika Pemain, bagian Saran</a> (memerlukan login).</p>
 @endsection

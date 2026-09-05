@@ -4,6 +4,8 @@ Marco Marcello Hugo · 5025221102
 
 Sumber: `pertemuan_1_lengkap-ok.pptx`, slide 39–43 (nomor urut file).
 
+Tema proyek: **Narafin AI Coach — Saran Analitika Pemain**. Tahap W1: konsep AI dan pemetaan bagian Saran Narafin. Dasarnya adalah bagian Saran pada Analitika Pemain Cashflowpoly di [Narafin](https://narafin.org). Detail sumber, batas implementasi, dan perkembangan W1–W4 ada di [rencana AI](docs/narafin-ai.md).
+
 ## Menjalankan
 
 Dari root proyek, aktifkan runtime lokal dengan `. .\dev-env.ps1`, lalu:
@@ -33,9 +35,11 @@ Buka http://127.0.0.1:8001. Dependensi dan `.env` sudah disiapkan di komputer in
 
 ## Pengujian dan screenshot
 
-Screenshot: [desktop](docs/desktop.png) dan [mobile](docs/mobile.png).
+Jalankan `python tests/check.py` setelah mengaktifkan runtime, atau `python tests/check.py --php C:\path\to\php.exe`. Tes menyesuaikan minggu dengan branch dan memeriksa fitur Laravel serta konteks saran Narafin.
 
-[Presentasi lima slide](docs/presentasi-w1.pptx) berisi hasil instalasi, alur request, tampilan, dan skenario demo individu. Tambahkan hasil anggota kelompok sesuai data aktual sebelum presentasi kelompok.
+Screenshot awal sebelum penyesuaian tema: [desktop](docs/desktop.png) dan [mobile](docs/mobile.png).
+
+[Presentasi lima slide versi awal](docs/presentasi-w1.pptx) berisi hasil instalasi, alur request, tampilan, dan skenario demo individu sebelum penyesuaian tema Narafin. Rencana AI terkini ada di halaman `/project-idea` dan `docs/narafin-ai.md`.
 
 ## Berkas utama
 
