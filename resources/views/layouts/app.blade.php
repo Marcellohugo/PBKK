@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title') · PBKK W1</title>
+    <title>@yield('title') · ITS Academic</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
@@ -11,14 +11,16 @@
 <a class="skip-link" href="#konten">Lewati navigasi</a>
 <nav class="navbar navbar-dark py-3" aria-label="Navigasi utama">
     <div class="container gap-3 flex-wrap">
-        <a class="navbar-brand" href="{{ url('/') }}">ITS <span class="fw-normal">/ Academic</span></a>
-        <div class="d-flex flex-wrap"><a class="nav-link px-2" href="{{ route('home') }}">Home</a>
-<a class="nav-link px-2" href="{{ route('about') }}">About</a>
-<a class="nav-link px-2" href="{{ route('project') }}">Project</a>
-<a class="nav-link px-2" href="{{ route('calculator') }}">Kalkulator</a></div>
+        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}"><span class="brand-mark" aria-hidden="true">I</span>ITS <span class="fw-normal ms-1">Academic</span></a>
+        <div class="nav-list">
+            <a class="nav-link px-3 py-2" href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif>Beranda</a>
+            <a class="nav-link px-3 py-2" href="{{ route('about') }}" @if(request()->routeIs('about')) aria-current="page" @endif>Tentang</a>
+            <a class="nav-link px-3 py-2" href="{{ route('project') }}" @if(request()->routeIs('project')) aria-current="page" @endif>Ide proyek</a>
+            <a class="nav-link px-3 py-2" href="{{ route('calculator') }}" @if(request()->routeIs('calculator', 'calculate')) aria-current="page" @endif>Kalkulator</a>
+        </div>
     </div>
 </nav>
 <main id="konten" class="container py-4 py-md-5">@yield('content')</main>
-<footer class="container py-4 small muted">PBKK · Pertemuan 1 · Teknik Informatika ITS<br>Marco Marcello Hugo · 5025221102</footer>
+<footer class="container py-4 small muted d-flex flex-wrap justify-content-between gap-2"><span>Teknik Informatika · Institut Teknologi Sepuluh Nopember</span><span>Marco Marcello Hugo · 5025221102</span></footer>
 </body>
 </html>

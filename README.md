@@ -37,9 +37,9 @@ Buka http://127.0.0.1:8001. Dependensi dan `.env` sudah disiapkan di komputer in
 
 Jalankan `python tests/check.py` setelah mengaktifkan runtime, atau `python tests/check.py --php C:\path\to\php.exe`. Tes menyesuaikan minggu dengan branch dan memeriksa fitur Laravel serta konteks saran Narafin.
 
-Screenshot awal sebelum penyesuaian tema: [desktop](docs/desktop.png) dan [mobile](docs/mobile.png).
+Screenshot aplikasi saat ini: [desktop](docs/desktop.png) dan [mobile](docs/mobile.png).
 
-[Presentasi lima slide versi awal](docs/presentasi-w1.pptx) berisi hasil instalasi, alur request, tampilan, dan skenario demo individu sebelum penyesuaian tema Narafin. Rencana AI terkini ada di halaman `/project-idea` dan `docs/narafin-ai.md`.
+[Presentasi lima slide](docs/presentasi-w1-final-v3.pptx) berisi hasil instalasi, alur request, tampilan terkini, dan skenario demo individu. Hasil anggota kelompok lain perlu ditambahkan oleh kelompok sebelum presentasi bersama.
 
 ## Berkas utama
 
@@ -48,4 +48,4 @@ Screenshot awal sebelum penyesuaian tema: [desktop](docs/desktop.png) dan [mobil
 - `resources/views/`: Blade layout dan halaman.
 - `config/profile.php`: identitas dan usulan tema.
 
-`.env` dan `vendor/` dikecualikan oleh `.gitignore`. Pengunggahan GitHub dan pengumpulan LMS dilakukan terpisah oleh pemilik tugas.
+`.env` dan `vendor/` dikecualikan oleh `.gitignore`. Source code tersedia di [branch w1 GitHub](https://github.com/Marcellohugo/PBKK/tree/w1). Tautan branch dan screenshot dikumpulkan ke LMS oleh pemilik tugas.
