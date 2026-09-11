@@ -1,4 +1,4 @@
-# Narafin AI Coach — W1
+# Narafin AI Coach — W2
 
 Tema ini dikembangkan dari bagian **Saran** pada **Analitika Pemain pada Sesi** di [Narafin](https://narafin.org), yang dibaca pada 29 September 2026. Narafin adalah dashboard analitika permainan Cashflowpoly. Halaman sumber memerlukan login; kredensial tidak disimpan dalam proyek ini.
 
@@ -22,6 +22,6 @@ Perhitungan tetap dilakukan oleh aplikasi. LLM direncanakan menerima ringkasan m
 | w3 | Form evaluasi saran dengan mode/indikator, validasi ITS, CSRF, dan CAPTCHA | Mengolah metrik dari form |
 | w4 | Demo input metrik, saran dengan bukti angka, prioritas pinjaman, dan data kosong | Integrasi LLM serta metrik Narafin yang berizin |
 
-**Tahap branch ini: W1 — Konsep dan pemetaan masalah.** Mengidentifikasi kebutuhan saran kontekstual dari Analitika Pemain Narafin.
+**Tahap branch ini: W2 — Skenario menurut mode permainan.** Menampilkan contoh saran kas dan bahan pada Pemula, ditambah pinjaman pada Mahir.
 
 Contoh pada proyek adalah data simulasi yang dibuat untuk latihan, bukan rekaman pribadi pemain Narafin. Demo W4 menggunakan aturan deterministik sebagai dasar sebelum integrasi LLM. Tidak ada panggilan API AI, sinkronisasi Narafin, atau klaim bahwa model sudah berjalan.

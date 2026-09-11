@@ -1,45 +1,49 @@
-# W1 — ITS Academic Profile
+# W2 — Laravel Local Sandbox
 
 Marco Marcello Hugo · 5025221102
 
-Sumber: `pertemuan_1_lengkap-ok.pptx`, slide 39–43 (nomor urut file).
+Sumber: `pertemuan_2_lengkap-ok.pptx`, slide 38–42 (nomor urut file).
 
-Tema proyek: **Narafin AI Coach — Saran Analitika Pemain**. Tahap W1: konsep AI dan pemetaan bagian Saran Narafin. Dasarnya adalah bagian Saran pada Analitika Pemain Cashflowpoly di [Narafin](https://narafin.org). Detail sumber, batas implementasi, dan perkembangan W1–W4 ada di [rencana AI](docs/narafin-ai.md).
+Tema proyek: **Narafin AI Coach — Saran Analitika Pemain**. Tahap W2: skenario saran berdasarkan mode Pemula/Mahir. Dasarnya adalah bagian Saran pada Analitika Pemain Cashflowpoly di [Narafin](https://narafin.org). Detail sumber, batas implementasi, dan perkembangan W1–W4 ada di [rencana AI](docs/narafin-ai.md).
 
 ## Menjalankan
 
 Dari root proyek, aktifkan runtime lokal dengan `. .\dev-env.ps1`, lalu:
 
 ```powershell
-php artisan serve --host=127.0.0.1 --port=8001
+php artisan serve --host=127.0.0.1 --port=8002
 ```
 
-Buka http://127.0.0.1:8001. Dependensi dan `.env` sudah disiapkan di komputer ini. Untuk instalasi baru, jalankan `composer install`, salin `.env.example` ke `.env`, kemudian `php artisan key:generate`.
+Buka http://127.0.0.1:8002. Dependensi dan `.env` sudah disiapkan di komputer ini. Untuk instalasi baru, jalankan `composer install`, salin `.env.example` ke `.env`, kemudian `php artisan key:generate`.
 
 ## Pemetaan tugas dan challenge
 
 | Ketentuan | Implementasi |
 | --- | --- |
-| Home / | PageController@index, home.blade.php, nama dan NRP |
-| /about | PageController@about, about.blade.php, profil departemen |
-| /project-idea | PageController@project, project.blade.php, rancangan Agentic AI |
-| /hitung/{angka1}/{angka2}/{operasi} | Empat operasi, validasi angka dan pembagian nol |
-| Tampilan | Bootstrap 5 CDN, navbar empat halaman, responsif |
+| / | Sambutan dan profil dengan details HTML interaktif |
+| /mahasiswa/{nrp} | Profil sesuai NRP terdaftar, regex tepat 10 digit |
+| /agent/{tema?} | Tema opsional, fallback General Assistant Agent |
+| Named routes | Seluruh rute aplikasi bernama, navigasi memakai route() |
+| /dashboard | Grup prefix untuk home, mahasiswa, dan agent |
+| /hitung-ipk/{ip1}/{ip2} | Jumlah dan rata-rata dua IP, validasi rentang 0–4 |
+| Fallback | Halaman kustom dengan status HTTP 404 |
 
 ## Urutan demo
 
-1. Buka `/`, `/about`, dan `/project-idea` dari navbar.
-2. Buka `/hitung/10/5/kali`: hasil 50.
-3. Buka `/hitung/10/0/bagi`: pesan kesalahan, HTTP 422.
-4. Tunjukkan `routes/web.php`, `PageController`, lalu view. Semua rute halaman menggunakan controller tanpa closure.
+1. Buka `/mahasiswa/5025221102`, lalu `/mahasiswa/123` untuk penolakan regex.
+2. Bandingkan `/agent` dengan `/agent/Network%20Agent`.
+3. Buka `/dashboard/mahasiswa/5025221102`.
+4. Buka `/hitung-ipk/3.5/4`: jumlah 7.5 dan rata-rata 3.75.
+5. Buka URL tidak dikenal dan jalankan `php artisan route:list --except-vendor`.
+6. Bandingkan `/agent?mode=pemula` dengan `/agent?mode=mahir`; contoh pinjaman hanya muncul pada Mahir.
 
 ## Pengujian dan screenshot
 
 Jalankan `python tests/check.py` setelah mengaktifkan runtime, atau `python tests/check.py --php C:\path\to\php.exe`. Tes menyesuaikan minggu dengan branch dan memeriksa fitur Laravel serta konteks saran Narafin.
 
-Screenshot aplikasi saat ini: [desktop](docs/desktop.png) dan [mobile](docs/mobile.png).
+Screenshot aplikasi saat ini: [desktop](docs/desktop.png), [mobile](docs/mobile.png), dan [profil](docs/profile.png).
 
-[Presentasi lima slide](docs/presentasi-w1-final-v3.pptx) berisi hasil instalasi, alur request, tampilan terkini, dan skenario demo individu. Hasil anggota kelompok lain perlu ditambahkan oleh kelompok sebelum presentasi bersama.
+IPK menggunakan rata-rata aritmetika sesuai soal (asumsi SKS sama), bukan perhitungan transkrip berbobot SKS. Riwayat studi pada profil merangkum pekerjaan PBKK pertemuan 1–2 yang tersedia; transkrip resmi belum diberikan.
 
 ## Berkas utama
 
@@ -48,4 +52,4 @@ Screenshot aplikasi saat ini: [desktop](docs/desktop.png) dan [mobile](docs/mobi
 - `resources/views/`: Blade layout dan halaman.
 - `config/profile.php`: identitas dan usulan tema.
 
-`.env` dan `vendor/` dikecualikan oleh `.gitignore`. Source code tersedia di [branch w1 GitHub](https://github.com/Marcellohugo/PBKK/tree/w1). Tautan branch dan screenshot dikumpulkan ke LMS oleh pemilik tugas.
+`.env` dan `vendor/` dikecualikan oleh `.gitignore`. Pengunggahan GitHub dan pengumpulan LMS dilakukan terpisah oleh pemilik tugas.

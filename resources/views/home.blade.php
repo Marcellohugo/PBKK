@@ -1,16 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Beranda')
+@section('title', 'Laravel Local Sandbox')
 @section('content')
-<section class="hero mb-5">
-    <p class="eyebrow mb-4">Ruang akademik · Teknik Informatika ITS</p>
-    <h1 class="display-4 fw-bold">Belajar, merancang, membangun.</h1>
-    <p class="lead mt-4">Halo, saya {{ $profil['nama'] }}. Di sini saya mendokumentasikan proses belajar framework dan rancangan proyek Agentic AI.</p>
-    <div class="d-flex flex-wrap gap-3 mt-4"><a class="btn btn-light" href="{{ route('project') }}">Jelajahi ide proyek</a><a class="btn btn-outline-light" href="{{ route('about') }}">Kenali profil akademik</a></div>
-    <p class="small mt-4 mb-0 text-white-50">NRP {{ $profil['nrp'] }} · {{ $profil['departemen'] }}</p>
-</section>
-<p class="eyebrow muted mb-2">Mulai dari sini</p><h2 class="h3 fw-bold mb-4">Dua hal yang sedang saya kerjakan</h2>
-<div class="row g-4">
-    <div class="col-md-6"><article class="card h-100 p-4 p-lg-5"><p class="eyebrow muted">01 / Akademik</p><h3 class="h4 fw-bold">Ruang belajar framework</h3><p class="muted">Profil akademik dan penerapan MVC dalam Pemrograman Berbasis Kerangka Kerja.</p><a class="feature-link mt-auto" href="{{ route('about') }}">Kenali departemen</a></article></div>
-    <div class="col-md-6"><article class="card h-100 p-4 p-lg-5"><p class="eyebrow muted">02 / Rancangan</p><h3 class="h4 fw-bold">{{ $profil['tema'] }}</h3><p class="muted">{{ $profil['ai']['capaian'] }}</p><a class="feature-link mt-auto" href="{{ route('project') }}">Lihat ide Agentic AI</a></article></div>
-</div>
+<section class="hero mb-4"><p class="eyebrow">Pertemuan 02 · Routing sandbox</p><h1 class="display-5 fw-bold">Halo, {{ $profil['nama'] }}.</h1><p class="lead">Selamat datang di ruang akademik ITS.</p><a class="btn btn-light" href="{{ route('mahasiswa.show', ['nrp' => $profil['nrp']]) }}">Buka profil {{ $profil['nrp'] }}</a></section>
+<div class="row g-4"><div class="col-md-7"><article class="card p-4 h-100"><h2 class="h4">Rancangan Agentic AI</h2><p>{{ $profil['tema'] }}</p><a href="{{ route('agent', ['tema' => $profil['tema']]) }}">Jelajahi ide proyek</a></article></div><div class="col-md-5"><article class="card p-4 h-100"><h2 class="h4">Profil akademik</h2><details><summary>Lihat identitas</summary><p class="mt-3">{{ $profil['nama'] }}<br>NRP {{ $profil['nrp'] }}<br>{{ $profil['departemen'] }}</p></details><a class="mt-3" href="{{ route('dashboard.mahasiswa.show', ['nrp' => $profil['nrp']]) }}">Profil melalui dashboard</a></article></div></div>
 @endsection
