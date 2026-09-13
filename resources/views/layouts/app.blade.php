@@ -16,6 +16,7 @@
 <a class="nav-link px-2" href="{{ route('dashboard.home') }}">Dashboard</a>
 <a class="nav-link px-2" href="{{ route('agent') }}">Agent AI</a>
 <a class="nav-link px-2" href="{{ route('ipk.form') }}">Kalkulator IPK</a></div>
+<div class="d-flex flex-wrap"><a class="nav-link px-2" href="{{ route('about') }}">Tentang</a><a class="nav-link px-2" href="{{ route('project') }}">Ide proyek</a><a class="nav-link px-2" href="{{ route('calculator') }}">Kalkulator</a></div>
     </div>
 </nav>
 <main id="konten" class="container py-4 py-md-5">@yield('content')</main>

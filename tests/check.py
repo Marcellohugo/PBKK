@@ -74,6 +74,10 @@ def check_week(week, php):
                 request('/hitung/1e999/2/kali', status=422)
                 request('/kalkulator?angka1=6&angka2=3&operasi=bagi', contains='adalah 2')
             elif week == 2:
+                request('/about', contains='Teknik Informatika ITS')
+                request('/project-idea', contains='Narafin AI Coach')
+                request('/kalkulator', contains='name="angka1"')
+                request('/hitung/10/5/bagi', contains='adalah 2')
                 request('/', contains='Marco Marcello Hugo')
                 request('/mahasiswa/5025221102', contains='5025221102')
                 for path in ['/mahasiswa/123', '/mahasiswa/abcdefghij', '/mahasiswa/9999999999', '/missing']:
