@@ -7,15 +7,10 @@ return [
     'tema' => env('PROJECT_THEME', 'Narafin AI Coach — Saran Analitika Pemain'),
     'deskripsi' => 'Rencana asisten AI untuk menjelaskan hasil permainan Cashflowpoly dan menyusun saran yang mempertimbangkan kas, pemakaian bahan, serta pinjaman sesuai mode permainan.',
     'ai' => [
-        'minggu' => 2,
-        'fase' => 'Skenario menurut mode permainan',
-        'capaian' => 'Menampilkan contoh saran kas dan bahan pada Pemula, ditambah pinjaman pada Mahir.',
+        'minggu' => 3,
+        'fase' => 'Evaluasi saran tervalidasi',
+        'capaian' => 'Menerima evaluasi mahasiswa terhadap saran dengan konteks mode dan indikator.',
         'sumber' => 'https://narafin.org',
         'indikator' => ['kas' => 'Perubahan koin dari awal', 'bahan' => 'Persentase bahan yang terpakai', 'pinjaman' => 'Pinjaman belum lunas (Mahir)'],
-        'skenario' => [
-            ['indikator' => 'kas', 'judul' => 'Kas menurun', 'bukti' => 'Contoh simulasi: koin awal 20, koin akhir 12; perubahan kas -40%.', 'saran' => 'Tinjau pengeluaran terbesar dan pilih aksi yang menghasilkan koin sebelum menambah belanja.', 'mode' => 'semua'],
-            ['indikator' => 'bahan', 'judul' => 'Bahan belum banyak terpakai', 'bukti' => 'Contoh simulasi: 4 dari 10 kartu bahan dipakai; pemakaian 40%.', 'saran' => 'Gunakan persediaan untuk pesanan berikutnya sebelum membeli bahan baru.', 'mode' => 'semua'],
-            ['indikator' => 'pinjaman', 'judul' => 'Masih ada pinjaman', 'bukti' => 'Contoh simulasi: sisa pokok pinjaman 6 koin pada mode Mahir.', 'saran' => 'Susun pelunasan sesuai kas yang tersedia karena pinjaman belum lunas memengaruhi poin kebahagiaan.', 'mode' => 'mahir'],
-        ],
     ],
 ];

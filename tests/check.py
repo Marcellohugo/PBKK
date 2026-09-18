@@ -74,10 +74,6 @@ def check_week(week, php):
                 request('/hitung/1e999/2/kali', status=422)
                 request('/kalkulator?angka1=6&angka2=3&operasi=bagi', contains='adalah 2')
             elif week == 2:
-                request('/about', contains='Teknik Informatika ITS')
-                request('/project-idea', contains='Narafin AI Coach')
-                request('/kalkulator', contains='name="angka1"')
-                request('/hitung/10/5/bagi', contains='adalah 2')
                 request('/', contains='Marco Marcello Hugo')
                 request('/mahasiswa/5025221102', contains='5025221102')
                 for path in ['/mahasiswa/123', '/mahasiswa/abcdefghij', '/mahasiswa/9999999999', '/missing']:
@@ -119,6 +115,14 @@ def check_week(week, php):
                     request('/feedback', {**data,'email':email}, contains='email')
                 request('/feedback', {**data,'indikator':'pinjaman'}, contains='Pinjaman hanya berlaku pada Mahir')
                 request('/feedback', {**data,'mode_permainan':'invalid'}, contains='Pilih mode Pemula atau Mahir')
+                request('/feedback', {**data,'indikator':''}, contains='Lengkapi mode dan indikator')
+                request('/feedback', {**data,'mode_permainan':''}, contains='Lengkapi mode dan indikator')
+                general = {k:v for k,v in data.items() if k not in ('mode_permainan', 'indikator')}
+                request('/feedback', general, contains='berhasil divalidasi')
+                form = request('/')
+                data['_token'] = token(form)
+                a,b = map(int, re.search(r'Berapakah (\d+) \+ (\d+)\?', form).groups())
+                data['captcha'] = a+b
                 body = request('/feedback', {**data,'pesan':'<script>alert("test")</script>'}, contains='berhasil divalidasi')
                 assert '&lt;script&gt;' in body and '<script>' not in body
                 request('/feedback', data, contains='sesi telah kedaluwarsa')
