@@ -53,4 +53,4 @@ Data form hanya ditampilkan melalui flash session pada konfirmasi setelah redire
 - `resources/views/`: Blade layout dan halaman.
 - `config/profile.php`: identitas dan usulan tema.
 
-`.env` dan `vendor/` dikecualikan oleh `.gitignore`. Pengunggahan GitHub dan pengumpulan LMS dilakukan terpisah oleh pemilik tugas.
+`.env` dan `vendor/` dikecualikan oleh `.gitignore`. Source code tersedia di [branch w3 GitHub](https://github.com/Marcellohugo/PBKK/tree/w3). Tautan branch dan screenshot dikumpulkan ke LMS oleh pemilik tugas.

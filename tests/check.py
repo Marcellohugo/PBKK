@@ -35,7 +35,7 @@ def check_week(week, php):
         client = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
 
         def request(path, data=None, status=200, contains=None, referer=None):
-            headers = {'Referer': base + (referer or '/')}
+            headers = {'Referer': base + (referer or ('/feedback' if path == '/feedback' else '/'))}
             payload = urllib.parse.urlencode(data).encode() if data is not None else None
             req = urllib.request.Request(base + path, data=payload, headers=headers)
             try:
@@ -97,7 +97,13 @@ def check_week(week, php):
                 routes = json.loads(subprocess.check_output([php, 'artisan', 'route:list', '--json'], cwd=app))
                 assert all(route['name'] for route in routes if not route['uri'].startswith('storage/'))
             elif week == 3:
-                form = request('/', contains='Secure Feedback Hub')
+                request('/', contains='Marco Marcello Hugo')
+                request('/about', contains='Teknik Informatika ITS')
+                request('/hitung/10/5/bagi', contains='adalah 2')
+                request('/mahasiswa/5025221102', contains='5025221102')
+                request('/agent?mode=mahir', contains='Masih ada pinjaman')
+                request('/hitung-ipk/3.5/4', contains='3.75')
+                form = request('/feedback', contains='Secure Feedback Hub')
                 csrf = token(form)
                 a,b = map(int, re.search(r'Berapakah (\d+) \+ (\d+)\?', form).groups())
                 data = {'_token':csrf, 'nama':'Marco Marcello Hugo', 'email':'marco@student.its.ac.id',
@@ -119,7 +125,7 @@ def check_week(week, php):
                 request('/feedback', {**data,'mode_permainan':''}, contains='Lengkapi mode dan indikator')
                 general = {k:v for k,v in data.items() if k not in ('mode_permainan', 'indikator')}
                 request('/feedback', general, contains='berhasil divalidasi')
-                form = request('/')
+                form = request('/feedback')
                 data['_token'] = token(form)
                 a,b = map(int, re.search(r'Berapakah (\d+) \+ (\d+)\?', form).groups())
                 data['captcha'] = a+b
