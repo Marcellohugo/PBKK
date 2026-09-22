@@ -2,11 +2,11 @@
 @section('title', 'Secure Feedback Hub')
 @section('content')
 <div class="row g-4 g-lg-5">
-<section class="col-lg-5"><p class="eyebrow muted">Pertemuan 03 · Secure Feedback Hub</p><h1 class="display-5 fw-bold">Masukan akademik<br>untuk ITS.</h1><p class="lead mt-4">Sampaikan kritik, gagasan, atau saran mengenai akademik, sarana prasarana, dan kegiatan mahasiswa.</p><p class="muted">Form ini latihan lokal. Masukan hanya tampil dalam konfirmasi sesi dan tidak dikirim ke departemen.</p>
+<section class="col-lg-5"><p class="eyebrow muted">Secure Feedback Hub</p><h1 class="display-5 fw-bold">Suara Anda membantu kampus tumbuh.</h1><p class="lead mt-4">Sampaikan kritik, gagasan, atau saran mengenai akademik, sarana prasarana, dan kegiatan mahasiswa.</p><p class="muted">Masukan hanya tampil dalam konfirmasi sesi dan tidak dikirim ke departemen.</p>
 <div class="card p-4 mt-4"><h2 class="h5">Evaluasi saran Narafin (opsional)</h2><p>Jika membahas rancangan Agentic AI, tambahkan mode permainan dan indikator di bawah.</p><p class="mb-0">Contoh: kas simulasi turun dari 20 ke 12 koin sementara 4 dari 10 bahan terpakai. Apakah saran memakai bukti yang cukup?</p></div>
-<p class="muted mt-4">Capaian W3: validasi masukan, email ITS, CSRF, dan CAPTCHA. Berikutnya di W4: demo perhitungan metrik simulasi.</p>
+<p class="muted mt-4">Formulir ini memvalidasi email ITS dan jawaban matematika sebelum menampilkan konfirmasi.</p>
 <p class="muted">Referensi: <a href="{{ $profil['ai']['sumber'] }}" target="_blank" rel="noopener">Narafin · Analitika Pemain, bagian Saran</a>. Integrasi LLM masih direncanakan.</p></section>
-<div class="col-lg-7"><form method="POST" action="{{ route('feedback.store') }}" class="card p-4 p-md-5">
+<div class="col-lg-7"><form method="POST" action="{{ route('feedback.store') }}" class="card p-4 p-md-5"><p class="eyebrow muted mb-2">Formulir masukan</p><h2 class="h4 fw-bold mb-4">Ceritakan pengalaman Anda</h2>
 @csrf
 @if($errors->any())<div class="alert alert-danger" role="alert">Masukan belum diproses. Periksa kolom yang ditandai di bawah.</div>@endif
 <div class="mb-3"><label for="nama" class="form-label">Nama mahasiswa</label><input id="nama" name="nama" class="form-control @error('nama') is-invalid @enderror" value="{{ old('nama') }}" minlength="3" maxlength="100" autocomplete="name" aria-describedby="nama-error" required>@error('nama')<p id="nama-error" class="invalid-feedback">{{ $message }}</p>@enderror</div>
