@@ -9,9 +9,18 @@
 </head>
 <body>
 <a class="skip-link" href="#konten">Lewati navigasi</a>
+<div class="top-bar py-1 px-3 text-white-50 small border-bottom border-secondary border-opacity-25" style="background: #001e3d; font-size: 0.75rem;">
+    <div class="container d-flex justify-content-between flex-wrap gap-2">
+        <span class="text-white-50">Institut Teknologi Sepuluh Nopember · Surabaya</span>
+        <span class="d-none d-sm-inline font-monospace text-white-50">FTEIC · Departemen Teknik Informatika</span>
+    </div>
+</div>
 <nav class="navbar navbar-dark py-3" aria-label="Navigasi utama">
     <div class="container gap-3 flex-wrap">
-        <a class="navbar-brand d-flex align-items-center" href="{{ route('home') }}"><span class="brand-mark" aria-hidden="true">I</span>ITS <span class="fw-normal ms-1">Academic</span></a>
+        <a class="navbar-brand d-flex flex-column py-0" href="{{ route('home') }}">
+            <span class="fs-5 fw-bold lh-1 text-white">ITS <span class="fw-normal text-white-50">Academic</span></span>
+            <span class="small text-uppercase tracking-wider fw-semibold" style="font-size: 0.65rem; color: #f8ac18;">Portal PBKK · Teknik Informatika</span>
+        </a>
         <div class="nav-list">
             <a class="nav-link px-3 py-2" href="{{ route('home') }}" @if(request()->routeIs('home')) aria-current="page" @endif>Beranda</a>
             <a class="nav-link px-3 py-2" href="{{ route('mahasiswa.show', config('profile.nrp')) }}" @if(request()->routeIs('mahasiswa.show')) aria-current="page" @endif>Profil</a>
