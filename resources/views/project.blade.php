@@ -1,10 +1,7 @@
 @extends('layouts.app')
-@section('title', 'Rencana Proyek Agentic AI')
+@section('title', 'Ide Proyek')
 @section('content')
-<p class="eyebrow muted">{{ $profil['ai']['fase'] }}</p><h1>{{ $profil['tema'] }}</h1>
-<p class="lead my-4">{{ $profil['deskripsi'] }}</p>
-<article class="card p-4 mb-4"><h2 class="h4">Berangkat dari Saran Narafin</h2><p>Pada Analitika Pemain Cashflowpoly, setiap indikator memiliki penjelasan dan saran. Rencana AI ini menghubungkan beberapa indikator agar pemain memahami penyebab hasilnya dan langkah permainan berikutnya.</p><p class="mb-0">Contoh: kas menurun sementara bahan masih tersisa. Saran perlu mengarahkan pemain memakai persediaan untuk pesanan, sambil meninjau pengeluaran.</p></article>
-<article class="card p-4"><h2 class="h4">Rancangan alur</h2><ol class="mb-0"><li>Pilih pemain, sesi, dan mode Pemula atau Mahir.</li><li>Aplikasi menghitung metrik dari catatan permainan; data kosong tetap ditandai belum tersedia.</li><li>LLM direncanakan merangkai bukti kas, bahan, dan pinjaman menjadi saran kontekstual.</li><li>Instruktur meninjau saran sebelum membahas strategi bersama pemain.</li></ol></article>
-<div class="alert alert-info mt-4" role="status"><strong>Capaian rancangan:</strong> {{ $profil['ai']['capaian'] }}</div>
-<p class="muted">Tahap ini baru rancangan. Integrasi LLM belum berjalan. Referensi: <a href="{{ $profil['ai']['sumber'] }}" target="_blank" rel="noopener">Narafin · Analitika Pemain, bagian Saran</a> (memerlukan login).</p>
+<p class="eyebrow">Usulan Agentic AI</p><h1 class="mt-3 text-4xl font-bold">{{ $profil['tema'] }}</h1><p class="mt-5 max-w-3xl text-lg">{{ $profil['deskripsi'] }}</p>
+<div class="mt-8 grid gap-5 md:grid-cols-3"><x-info-card title="Masukan" label="Data">Instruktur memilih pemain, sesi, dan mode permainan.</x-info-card><x-info-card title="Analisis" label="Proses">Aplikasi menghitung kas, penggunaan bahan, dan pinjaman yang tersedia.</x-info-card><x-info-card title="Saran" label="Keluaran">Hasil berbasis bukti disajikan untuk ditinjau instruktur.</x-info-card></div>
+<a class="mt-8 inline-block font-semibold text-sky-800 dark:text-sky-300" href="{{ route('idea') }}">Lihat rancangan dan demo →</a>
 @endsection

@@ -1,6 +1,7 @@
 @extends('layouts.app')
-@section('title', 'Profil Departemen')
+@section('title', 'Tentang')
 @section('content')
-<p class="eyebrow muted">Tentang kampus</p><h1>Teknik Informatika ITS</h1>
-<article class="card p-4 mt-4"><p class="lead">Departemen Teknik Informatika berada di Institut Teknologi Sepuluh Nopember, Surabaya.</p><p>Bidang pembelajarannya mencakup pemrograman, algoritma, rekayasa perangkat lunak, basis data, jaringan komputer, dan kecerdasan buatan.</p><p class="mb-0">Dalam PBKK, mahasiswa mempelajari pemisahan tanggung jawab melalui arsitektur MVC dan membangun aplikasi dengan Laravel.</p></article>
+<p class="eyebrow">Tentang aplikasi</p><h1 class="mt-3 text-4xl font-bold">Profil dan proyek PBKK</h1>
+<p class="mt-5 max-w-3xl text-lg">Aplikasi ini menampilkan profil mahasiswa, rancangan Narafin AI Coach, kalkulator, dan formulir masukan dengan Laravel.</p>
+<div class="mt-8 flex flex-wrap gap-4"><a class="rounded-xl bg-sky-900 px-5 py-3 font-semibold text-white" href="{{ route('profile') }}">Lihat profil</a><a class="rounded-xl border border-slate-300 px-5 py-3 font-semibold" href="{{ route('project') }}">Baca ide proyek</a></div>
 @endsection

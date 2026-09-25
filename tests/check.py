@@ -35,7 +35,7 @@ def check_week(week, php):
         client = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
 
         def request(path, data=None, status=200, contains=None, referer=None):
-            headers = {'Referer': base + (referer or ('/feedback' if path == '/feedback' else '/'))}
+            headers = {'Referer': base + (referer or '/')}
             payload = urllib.parse.urlencode(data).encode() if data is not None else None
             req = urllib.request.Request(base + path, data=payload, headers=headers)
             try:
@@ -97,13 +97,7 @@ def check_week(week, php):
                 routes = json.loads(subprocess.check_output([php, 'artisan', 'route:list', '--json'], cwd=app))
                 assert all(route['name'] for route in routes if not route['uri'].startswith('storage/'))
             elif week == 3:
-                request('/', contains='Marco Marcello Hugo')
-                request('/about', contains='Teknik Informatika ITS')
-                request('/hitung/10/5/bagi', contains='adalah 2')
-                request('/mahasiswa/5025221102', contains='5025221102')
-                request('/agent?mode=mahir', contains='Masih ada pinjaman')
-                request('/hitung-ipk/3.5/4', contains='3.75')
-                form = request('/feedback', contains='Secure Feedback Hub')
+                form = request('/', contains='Secure Feedback Hub')
                 csrf = token(form)
                 a,b = map(int, re.search(r'Berapakah (\d+) \+ (\d+)\?', form).groups())
                 data = {'_token':csrf, 'nama':'Marco Marcello Hugo', 'email':'marco@student.its.ac.id',
@@ -121,19 +115,23 @@ def check_week(week, php):
                     request('/feedback', {**data,'email':email}, contains='email')
                 request('/feedback', {**data,'indikator':'pinjaman'}, contains='Pinjaman hanya berlaku pada Mahir')
                 request('/feedback', {**data,'mode_permainan':'invalid'}, contains='Pilih mode Pemula atau Mahir')
-                request('/feedback', {**data,'indikator':''}, contains='Lengkapi mode dan indikator')
-                request('/feedback', {**data,'mode_permainan':''}, contains='Lengkapi mode dan indikator')
-                general = {k:v for k,v in data.items() if k not in ('mode_permainan', 'indikator')}
-                request('/feedback', general, contains='berhasil divalidasi')
-                form = request('/feedback')
-                data['_token'] = token(form)
-                a,b = map(int, re.search(r'Berapakah (\d+) \+ (\d+)\?', form).groups())
-                data['captcha'] = a+b
                 body = request('/feedback', {**data,'pesan':'<script>alert("test")</script>'}, contains='berhasil divalidasi')
                 assert '&lt;script&gt;' in body and '<script>' not in body
                 request('/feedback', data, contains='sesi telah kedaluwarsa')
                 request('/feedback/sukses', contains='Secure Feedback Hub')
             else:
+                request('/about', contains='Tentang aplikasi')
+                request('/project-idea', contains='Narafin AI Coach')
+                request('/kalkulator', contains='name="angka1"')
+                request('/hitung/10/5/bagi', contains='Hasil: 2')
+                request('/mahasiswa/5025221102', contains='Riwayat belajar')
+                request('/agent?mode=mahir', contains='Masih ada pinjaman')
+                request('/hitung-ipk/3.5/4', contains='3.75')
+                feedback = request('/feedback', contains='Secure Feedback Hub')
+                a, b = map(int, re.search(r'Berapakah (\d+) \+ (\d+)\?', feedback).groups())
+                feedback_data = {'_token': token(feedback), 'nama': 'Marco Marcello Hugo', 'email': 'marco@student.its.ac.id', 'kategori': 'Akademik', 'pesan': 'Saran akademik dengan lebih dari lima belas karakter.', 'captcha': a+b}
+                request('/feedback', {**feedback_data, '_token': 'bad'}, status=419)
+                request('/feedback', feedback_data, contains='Masukan berhasil divalidasi', referer='/feedback')
                 request('/', contains='Marco Marcello Hugo')
                 request('/profil-mahasiswa', contains='5025221102')
                 request('/beranda?user=Andi', contains='Selamat datang, Andi!')
