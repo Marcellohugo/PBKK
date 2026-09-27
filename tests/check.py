@@ -120,9 +120,10 @@ def check_week(week, php):
                 request('/feedback', data, contains='sesi telah kedaluwarsa')
                 request('/feedback/sukses', contains='Secure Feedback Hub')
             else:
-                request('/about', contains='Tentang aplikasi')
-                request('/project-idea', contains='Narafin AI Coach')
+                request('/about', contains='Profil dan proyek PBKK')
+                request('/project-idea', contains='Usulan Agentic AI')
                 request('/kalkulator', contains='name="angka1"')
+                request('/ipk', contains='id="ipk"')
                 request('/hitung/10/5/bagi', contains='Hasil: 2')
                 request('/mahasiswa/5025221102', contains='Riwayat belajar')
                 request('/agent?mode=mahir', contains='Masih ada pinjaman')

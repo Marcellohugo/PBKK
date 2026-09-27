@@ -18,7 +18,11 @@ class PageController extends Controller
     public function profile()
     {
         $profil = config('profile');
-        return view('profile', compact('profil'));
+        $riwayat = [
+            'Profil mahasiswa, MVC, dan routing melalui PageController.',
+            'Parameter rute, named routes, dashboard, dan kalkulator IPK.',
+        ];
+        return view('profile', compact('profil', 'riwayat'));
     }
 
     public function idea(Request $request)
@@ -152,13 +156,7 @@ class PageController extends Controller
         if ($nrp !== config('profile.nrp')) {
             return $this->notFound();
         }
-        $profil = config('profile');
-        // Riwayat yang dapat diverifikasi dari pekerjaan PBKK, bukan transkrip akademik.
-        $riwayat = [
-            'Profil mahasiswa, MVC, dan routing melalui PageController.',
-            'Parameter rute, named routes, dashboard, dan kalkulator IPK.',
-        ];
-        return view('profile', compact('profil', 'riwayat'));
+        return $this->profile();
     }
 
     public function agent(Request $request, string $tema = 'General Assistant Agent')
@@ -177,20 +175,20 @@ class PageController extends Controller
     {
         if ($request->hasAny(['ip1', 'ip2'])) {
             $data = $request->validate(['ip1' => 'required|numeric|between:0,4', 'ip2' => 'required|numeric|between:0,4']);
-            return redirect()->route('ipk.calculate', $data);
+            return redirect()->to(route('ipk.calculate', $data).'#ipk');
         }
-        return view('ipk');
+        return redirect()->to(route('calculator').'#ipk');
     }
 
     public function ipk(string $ip1, string $ip2)
     {
         $validator = Validator::make(compact('ip1', 'ip2'), ['ip1' => 'required|numeric|between:0,4', 'ip2' => 'required|numeric|between:0,4']);
         if ($validator->fails()) {
-            return response()->view('ipk', ['pesan' => 'IP setiap semester harus berupa angka antara 0 dan 4.'], 422);
+            return response()->view('calculator', ['ipkPesan' => 'IP setiap semester harus berupa angka antara 0 dan 4.'], 422);
         }
         $jumlah = $ip1 + $ip2;
         $rata = number_format($jumlah / 2, 2, '.', '');
-        return view('ipk', compact('ip1', 'ip2', 'jumlah', 'rata'));
+        return view('calculator', compact('ip1', 'ip2', 'jumlah', 'rata'));
     }
 
     public function notFound()
