@@ -664,51 +664,6 @@
     </div>
 </section>
 
-<section id="form-ide" class="mt-12 max-w-3xl scroll-mt-10">
-    <div class="rounded-xl border border-slate-200/90 bg-white p-6 shadow-2xs dark:border-slate-800 dark:bg-[#0b1c33] sm:p-7">
-        <p class="eyebrow">Kolaborasi Proyek</p>
-        <h2 class="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Kirim ide pengembangan</h2>
-        <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Form latihan lokal. Ide ditampilkan sebagai konfirmasi sesi, belum disimpan ke database.</p>
-
-        @if(session('status'))
-            <x-status-banner type="success" class="mt-5">{{ session('status') }}</x-status-banner>
-        @endif
-
-        @if(session('ide'))
-            <x-info-card :title="session('ide.judul')" label="Ide yang baru diajukan" class="mt-5 border-blue-300 dark:border-blue-700">
-                <p class="whitespace-pre-wrap leading-relaxed">{{ session('ide.deskripsi') }}</p>
-            </x-info-card>
-        @endif
-
-        @if($errors->hasAny(['nama', 'judul', 'deskripsi', 'mode']))
-            <x-status-banner type="error" class="mt-5">Ide belum diproses. Periksa kembali kolom di bawah.</x-status-banner>
-        @endif
-
-        <form method="POST" action="{{ route('idea.store') }}" class="mt-6 space-y-5">
-            @csrf
-            <input type="hidden" name="mode" value="{{ $dark ? 'dark' : 'light' }}">
-
-            <div>
-                <label for="nama" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Nama pengusul</label>
-                <input id="nama" name="nama" class="field" value="{{ old('nama', config('profile.nama')) }}" minlength="3" maxlength="100" autocomplete="name" aria-describedby="nama-error" required>
-                @error('nama')<p id="nama-error" class="error">{{ $message }}</p>@enderror
-            </div>
-
-            <div>
-                <label for="judul" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Judul ide</label>
-                <input id="judul" name="judul" class="field" value="{{ old('judul') }}" minlength="5" maxlength="150" aria-describedby="judul-error" required>
-                @error('judul')<p id="judul-error" class="error">{{ $message }}</p>@enderror
-            </div>
-
-            <div>
-                <label for="deskripsi" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Deskripsi ide</label>
-                <textarea id="deskripsi" name="deskripsi" class="field" rows="4" minlength="15" maxlength="3000" aria-describedby="deskripsi-error" required>{{ old('deskripsi') }}</textarea>
-                @error('deskripsi')<p id="deskripsi-error" class="error">{{ $message }}</p>@enderror
-            </div>
-
-            <button class="button">Kirim ide</button>
-        </form>
-    </div>
-</section>
 @endsection
+
 

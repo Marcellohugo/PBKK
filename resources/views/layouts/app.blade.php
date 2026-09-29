@@ -13,10 +13,7 @@
 <div class="border-b border-blue-950/20 bg-[#001e3d] text-slate-200 text-xs py-1.5 transition-colors dark:bg-[#030911] dark:border-slate-800">
     <div class="page flex flex-wrap items-center justify-between gap-2">
         <span class="font-medium tracking-wide">Institut Teknologi Sepuluh Nopember · Surabaya</span>
-        <div class="flex items-center gap-2 font-mono text-[11px]">
-            <span class="text-blue-200/90 hidden sm:inline">FTEIC · Teknik Informatika</span>
-            <span class="rounded bg-white/10 px-2 py-0.5 text-[10px] font-bold text-amber-300 border border-white/15">Progres Kurikulum: w1 &rarr; w4</span>
-        </div>
+        <span class="text-blue-200/90 font-mono text-[11px] hidden sm:inline">FTEIC · Departemen Teknik Informatika</span>
     </div>
 </div>
 
