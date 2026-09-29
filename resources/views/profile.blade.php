@@ -60,6 +60,35 @@
         </li>
         @endforeach
     </ul>
+
+    {{-- Detail Capaian Progres Sprint W1 - W4 --}}
+    <div class="mt-6 pt-5 border-t border-slate-200/80 dark:border-slate-800">
+        <p class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 mb-3">
+            Matriks Progres Sprint Mingguan (Branch w1 &rarr; w4)
+        </p>
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="rounded-lg border border-slate-200 bg-slate-50/60 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+                <span class="font-mono text-[10px] font-bold text-[#013880] dark:text-sky-300 uppercase">Sprint W1</span>
+                <p class="mt-1 text-xs font-bold text-slate-900 dark:text-white">Arsitektur MVC Dasar</p>
+                <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Rute Controller, Profil Jurusan, & Kalkulator 4 Operasi</p>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-slate-50/60 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+                <span class="font-mono text-[10px] font-bold text-amber-700 dark:text-amber-300 uppercase">Sprint W2</span>
+                <p class="mt-1 text-xs font-bold text-slate-900 dark:text-white">Parameter & Regex</p>
+                <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">Regex 10-Digit NRP, Named Routes, & Kalkulator IPK</p>
+            </div>
+            <div class="rounded-lg border border-slate-200 bg-slate-50/60 p-3 dark:border-slate-800 dark:bg-slate-900/40">
+                <span class="font-mono text-[10px] font-bold text-sky-700 dark:text-sky-300 uppercase">Sprint W3</span>
+                <p class="mt-1 text-xs font-bold text-slate-900 dark:text-white">Form & Sesi Captcha</p>
+                <p class="mt-1 text-[11px] text-slate-500 dark:text-slate-400">CSRF Security, Validasi Email ITS, & Session Captcha</p>
+            </div>
+            <div class="rounded-lg border border-blue-200 bg-blue-50/60 p-3 dark:border-blue-900 dark:bg-blue-950/40">
+                <span class="font-mono text-[10px] font-bold text-[#013880] dark:text-sky-300 uppercase">Sprint W4 (Aktif)</span>
+                <p class="mt-1 text-xs font-bold text-slate-900 dark:text-white">Layout, Vite & AI</p>
+                <p class="mt-1 text-[11px] text-slate-600 dark:text-slate-300">Blade Components, Vite Bundler, & Narafin AI Coach</p>
+            </div>
+        </div>
+    </div>
 </x-info-card>
 
 <section id="tentang" class="mt-12 scroll-mt-10 rounded-xl border border-slate-200/90 bg-white p-7 shadow-xs dark:border-slate-800 dark:bg-[#0b1c33]">

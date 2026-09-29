@@ -484,9 +484,13 @@
     <div class="rounded-xl border border-slate-200/90 bg-white p-6 shadow-2xs dark:border-slate-800 dark:bg-[#0b1c33] sm:p-7">
         <div class="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200/80 pb-5 dark:border-slate-800/80">
             <div>
-                <p class="eyebrow">Simulasi Metrik Real-Time</p>
-                <h2 id="demo-title" class="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Demo saran analitika pemain</h2>
-                <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Ubah metrik untuk melihat saran beserta bukti angka. Data contoh adalah simulasi; saran dihasilkan aturan deterministik, belum oleh LLM.</p>
+                <div class="badge-its mb-1">Simulasi & Evaluasi Keputusan</div>
+                <h2 id="demo-title" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+                    Simulator Analitika & Penyusunan Saran Pemain
+                </h2>
+                <p class="mt-1 text-sm text-slate-600 dark:text-slate-400 max-w-2xl">
+                    Uji logika pengambilan keputusan berbasis metrik permainan Cashflowpoly. Masukkan angka indikator secara manual atau pilih skenario preset cepat, lalu klik <strong>"Susun saran dari metrik"</strong> untuk memproses matriks evaluasi berbasis bukti angka.
+                </p>
             </div>
             
             <div class="flex items-center gap-2">
@@ -503,6 +507,37 @@
             </div>
         </div>
 
+        {{-- Panduan Matriks Evaluasi & Logika Keputusan --}}
+        <div class="mt-6 rounded-lg border border-blue-200/80 bg-blue-50/60 p-4 dark:border-blue-900/60 dark:bg-blue-950/30">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-[#013880] dark:text-sky-300 flex items-center gap-1.5">
+                <span class="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#013880] text-[10px] text-white dark:bg-sky-500 font-bold">i</span>
+                Bagaimana Matriks Evaluasi Bekerja Menyusun Saran?
+            </h3>
+            <p class="mt-1 text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                Algoritma analitika membandingkan 3 variabel finansial pemain terhadap ambang batas (<em>threshold</em>) objektif untuk menghasilkan diagnosa terarah:
+            </p>
+            <div class="mt-3 grid gap-3 sm:grid-cols-3 text-xs">
+                <div class="rounded border border-blue-100 bg-white/80 p-3 dark:border-blue-900/50 dark:bg-slate-900/70">
+                    <span class="font-bold text-[#013880] dark:text-sky-400">1. Matriks Arus Kas (&Delta;%)</span>
+                    <p class="mt-1 text-[11px] text-slate-600 dark:text-slate-400">
+                        Rumus: <code class="font-mono text-[10px]">((Akhir - Awal) / Awal) &times; 100%</code>. Jika bernilai negatif, algoritma mengeluarkan peringatan <em>Kas Menurun</em>.
+                    </p>
+                </div>
+                <div class="rounded border border-blue-100 bg-white/80 p-3 dark:border-blue-900/50 dark:bg-slate-900/70">
+                    <span class="font-bold text-[#013880] dark:text-sky-400">2. Matriks Utilisasi Bahan (%)</span>
+                    <p class="mt-1 text-[11px] text-slate-600 dark:text-slate-400">
+                        Rumus: <code class="font-mono text-[10px]">(Terpakai / Terkumpul) &times; 100%</code>. Ambang batas aman adalah &ge; 60%. Jika di bawah 60%, sinyal <em>Pemakaian Rendah</em> aktif.
+                    </p>
+                </div>
+                <div class="rounded border border-blue-100 bg-white/80 p-3 dark:border-blue-900/50 dark:bg-slate-900/70">
+                    <span class="font-bold text-[#013880] dark:text-sky-400">3. Matriks Liabilitas Utang</span>
+                    <p class="mt-1 text-[11px] text-slate-600 dark:text-slate-400">
+                        Khusus <strong>Mode Mahir</strong>: Jika sisa pinjaman &gt; 0, saran pinjaman otomatis diangkat menjadi <strong>Prioritas Utama #1</strong> sebelum saran kas dan bahan.
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <p class="mt-4 text-xs font-semibold text-slate-500 dark:text-slate-400">
             Mode {{ ucfirst($permainan) }}{{ $permainan === 'pemula' ? ': indikator pinjaman tidak digunakan.' : ': pinjaman menjadi prioritas pembahasan jika belum lunas.' }}
         </p>
@@ -512,12 +547,32 @@
             <x-status-banner type="error" class="mt-4">Metrik belum diproses. Periksa kolom di bawah.</x-status-banner>
         @endif
 
-        <form method="POST" action="{{ route('player.advice') }}" class="mt-6 grid gap-5 sm:grid-cols-2 rounded-lg bg-slate-50/70 p-5 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800">
+        {{-- Tombol Preset Skenario Cepat --}}
+        <div class="mt-6 flex flex-wrap items-center gap-2">
+            <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Pilih Skenario Cepat:</span>
+            <button type="button" 
+                    onclick="setMetricPreset(17, 15, 6, 2, 1)" 
+                    class="rounded-md border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:border-[#013880] hover:text-[#013880] transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                📋 Skenario 1: Kasus Riil Marco (Koin 15, Bahan 33%, Pinjaman 1)
+            </button>
+            <button type="button" 
+                    onclick="setMetricPreset(15, 24, 10, 8, 0)" 
+                    class="rounded-md border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:border-[#013880] hover:text-[#013880] transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                📋 Skenario 2: Usaha Sehat & Efisien (Koin +60%, Bahan 80%)
+            </button>
+            <button type="button" 
+                    onclick="setMetricPreset(20, 12, 10, 4, 6)" 
+                    class="rounded-md border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:border-[#013880] hover:text-[#013880] transition dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200">
+                📋 Skenario 3: Penumpukan Stok Mentah (-40%, Pinjaman 6)
+            </button>
+        </div>
+
+        <form method="POST" action="{{ route('player.advice') }}" class="mt-3 grid gap-5 sm:grid-cols-2 rounded-lg bg-slate-50/70 p-5 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800">
             @csrf
             <input type="hidden" name="mode" value="{{ $dark ? 'dark' : 'light' }}">
             <input type="hidden" name="mode_permainan" value="{{ $permainan }}">
 
-            @foreach(['koin_awal' => ['Koin awal', 20, 1, 1000000], 'koin_akhir' => ['Koin akhir', 12, 0, 1000000], 'bahan_terkumpul' => ['Bahan terkumpul (kartu)', 10, 0, 100000], 'bahan_terpakai' => ['Bahan terpakai (kartu)', 4, 0, 100000]] as $field => $spec)
+            @foreach(['koin_awal' => ['Koin awal (saldo mulai)', 20, 1, 1000000], 'koin_akhir' => ['Koin akhir (saldo terkini)', 12, 0, 1000000], 'bahan_terkumpul' => ['Bahan terkumpul (total dibeli)', 10, 0, 100000], 'bahan_terpakai' => ['Bahan terpakai (jadikan pesanan)', 4, 0, 100000]] as $field => $spec)
             <div>
                 <label for="{{ $field }}" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">{{ $spec[0] }}</label>
                 <input id="{{ $field }}" name="{{ $field }}" type="number" step="1" min="{{ $spec[2] }}" max="{{ $spec[3] }}" 
@@ -528,7 +583,7 @@
 
             @if($permainan === 'mahir')
             <div class="sm:col-span-2">
-                <label for="sisa_pinjaman" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Sisa pokok pinjaman (koin)</label>
+                <label for="sisa_pinjaman" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Sisa pokok pinjaman (koin belum lunas)</label>
                 <input id="sisa_pinjaman" name="sisa_pinjaman" type="number" min="0" max="1000000" step="1" 
                        class="field text-sm" value="{{ old('sisa_pinjaman', 6) }}" aria-describedby="sisa_pinjaman-error">
                 @error('sisa_pinjaman')<p id="sisa_pinjaman-error" class="error">{{ $message }}</p>@enderror
@@ -536,32 +591,74 @@
             @endif
 
             <div class="sm:col-span-2 pt-3 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200/80 dark:border-slate-800">
-                <p class="text-xs text-slate-500 dark:text-slate-400">Kosongkan kedua kolom bahan jika belum tersedia. Sisa pinjaman 0 berarti lunas; kolom kosong berarti belum diketahui.</p>
-                <button class="button">Susun saran dari metrik</button>
+                <p class="text-xs text-slate-500 dark:text-slate-400">
+                    Kosongkan kedua kolom bahan jika belum tersedia. Sisa pinjaman 0 berarti lunas; kolom kosong berarti belum diketahui.
+                </p>
+                <button type="submit" class="button">
+                    <span>Susun saran dari metrik</span>
+                    <span aria-hidden="true">&rarr;</span>
+                </button>
             </div>
         </form>
 
+        <script>
+            function setMetricPreset(awal, akhir, terkumpul, terpakai, pinjaman) {
+                const elAwal = document.getElementById('koin_awal');
+                const elAkhir = document.getElementById('koin_akhir');
+                const elTerkumpul = document.getElementById('bahan_terkumpul');
+                const elTerpakai = document.getElementById('bahan_terpakai');
+                const elPinjaman = document.getElementById('sisa_pinjaman');
+
+                if (elAwal) elAwal.value = awal;
+                if (elAkhir) elAkhir.value = akhir;
+                if (elTerkumpul) elTerkumpul.value = terkumpul;
+                if (elTerpakai) elTerpakai.value = terpakai;
+                if (elPinjaman) elPinjaman.value = pinjaman;
+            }
+        </script>
+
         @if(session('analitika'))
-        <div class="mt-8 border-t border-slate-200/80 pt-6 dark:border-slate-800" aria-live="polite">
-            <div class="flex items-center justify-between mb-5">
-                <h3 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Hasil saran · {{ ucfirst(session('analitika.data.mode_permainan')) }}</h3>
-                <span class="badge-its">
-                    Saran Dihitung Berbasis Bukti
-                </span>
+        <div id="hasil-saran" class="mt-8 border-t border-slate-200/80 pt-6 dark:border-slate-800" aria-live="polite">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                <div>
+                    <div class="badge-its mb-1">Hasil Analisis Terverifikasi</div>
+                    <h3 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
+                        Hasil saran · {{ ucfirst(session('analitika.data.mode_permainan')) }}
+                    </h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="rounded-md bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-800">
+                        Saran Dihitung Berbasis Bukti
+                    </span>
+                </div>
             </div>
+
             <div class="grid gap-5 md:grid-cols-3">
                 @foreach(session('analitika.saran') as $item)
                 <x-info-card :title="$item['judul']" label="Saran berdasarkan input" 
                              class="{{ str_contains($item['judul'], 'Prioritas') ? 'border-amber-300 bg-amber-50/40 dark:border-amber-700 dark:bg-amber-950/20' : 'border-t-3 border-t-[#013880]' }}">
                     <div class="space-y-3">
-                        <p class="rounded-md bg-slate-50 dark:bg-slate-800/80 p-3 text-xs font-mono font-semibold text-slate-800 dark:text-slate-200 border border-slate-200/80 dark:border-slate-700/80">
-                            {{ $item['bukti'] }}
-                        </p>
-                        <p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">{{ $item['isi'] }}</p>
+                        <div class="rounded-md bg-slate-50 dark:bg-slate-800/80 p-3 border border-slate-200/80 dark:border-slate-700/80">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">Bukti Kalkulasi Metrik:</span>
+                            <p class="text-xs font-mono font-bold text-slate-900 dark:text-white">
+                                {{ $item['bukti'] }}
+                            </p>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 block mb-1">Rekomendasi Keputusan:</span>
+                            <p class="text-sm leading-relaxed text-slate-700 dark:text-slate-300">{{ $item['isi'] }}</p>
+                        </div>
                     </div>
                 </x-info-card>
                 @endforeach
             </div>
+        </div>
+        @else
+        {{-- Panduan Status Sebelum Form Disubmit --}}
+        <div class="mt-6 rounded-lg border border-dashed border-slate-300 p-4 text-center dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/30">
+            <p class="text-xs font-semibold text-slate-600 dark:text-slate-400">
+                💡 <strong>Petunjuk:</strong> Klik salah satu tombol skenario cepat di atas atau masukkan angka metrik Anda sendiri, lalu tekan tombol <strong>"Susun saran dari metrik"</strong> untuk melihat hasil evaluasi matematis secara langsung.
+            </p>
         </div>
         @endif
     </div>
