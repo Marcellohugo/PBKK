@@ -1,4 +1,8 @@
 <?php
+
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,10 +22,17 @@ Route::get('/agent/{tema?}', [PageController::class, 'agent'])->name('agent');
 Route::get('/ipk', [PageController::class, 'ipkForm'])->name('ipk.form');
 Route::get('/hitung-ipk/{ip1}/{ip2}', [PageController::class, 'ipk'])->name('ipk.calculate');
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
-    Route::get('/', [PageController::class, 'index'])->name('home');
+    Route::get('/', [DashboardController::class, 'index'])->middleware('auth')->name('home');
     Route::get('/mahasiswa/{nrp}', [PageController::class, 'student'])->where('nrp', '[0-9]{10}')->name('mahasiswa.show');
     Route::get('/agent/{tema?}', [PageController::class, 'agent'])->name('agent');
 });
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('/register', [RegisteredUserController::class, 'store']);
+});
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('logout');
 Route::get('/feedback', [PageController::class, 'feedbackCreate'])->name('feedback.create');
 Route::post('/feedback', [PageController::class, 'feedbackStore'])->name('feedback.store');
 Route::get('/feedback/sukses', [PageController::class, 'feedbackSuccess'])->name('feedback.success');

@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "pbkk/academic-sandbox",
     "type": "project",
-    "description": "Tugas PBKK pertemuan 1 sampai 4",
+    "description": "Tugas PBKK pertemuan 1 sampai 6",
     "keywords": [
         "laravel",
         "framework"
@@ -39,5 +39,9 @@
         "sort-packages": true
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require-dev": {
+        "fakerphp/faker": "^1.24",
+        "laravel/breeze": "^2.4"
+    }
 }

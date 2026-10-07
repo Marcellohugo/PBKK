@@ -51,7 +51,7 @@
             </dl>
             <div class="mt-4 border-t border-white/15 pt-3 flex items-center justify-between text-xs text-blue-200/90 font-mono">
                 <span>Semester Gasal / PBKK</span>
-                <span class="text-amber-300">W4 Terverifikasi</span>
+                <span class="text-amber-300">Terverifikasi</span>
             </div>
         </div>
     </div>

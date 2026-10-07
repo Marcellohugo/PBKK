@@ -19,7 +19,7 @@ import urllib.request
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def check_week(week, php):
+def check_week(week, php, php_args=()):
     with socket.socket() as sock:
         sock.bind(('127.0.0.1', 0))
         port = sock.getsockname()[1]
@@ -28,7 +28,7 @@ def check_week(week, php):
     router = app / 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php'
     with tempfile.TemporaryFile() as log:
         server = subprocess.Popen(
-            [php, '-S', f'127.0.0.1:{port}', str(router)],
+            [php, *php_args, '-S', f'127.0.0.1:{port}', str(router)],
             cwd=app / 'public', stdout=log, stderr=log, env=env,
         )
         base = f'http://127.0.0.1:{port}'
@@ -119,6 +119,23 @@ def check_week(week, php):
                 assert '&lt;script&gt;' in body and '<script>' not in body
                 request('/feedback', data, contains='sesi telah kedaluwarsa')
                 request('/feedback/sukses', contains='Secure Feedback Hub')
+            elif week == 6:
+                request('/', contains='Marco Marcello Hugo')
+                request('/dashboard', contains='Masuk ke portofolio')
+                form = request('/register', contains='Email mahasiswa ITS')
+                email = f'w6check{int(time.time())}@student.its.ac.id'
+                student = {'_token':token(form), 'name':'Mahasiswa Uji W6', 'email':email,
+                           'password':'password123', 'password_confirmation':'password123'}
+                request('/register', {**student, 'email':'uji@example.com'}, contains='Email mahasiswa ITS', referer='/register')
+                body = request('/register', student, contains='Belum ada proyek')
+                assert 'Narafin AI Coach — Saran Analitika Pemain' not in body
+                request('/logout', {'_token':token(body)}, contains='Portal PBKK')
+                form = request('/login', contains='Masuk ke portofolio')
+                body = request('/login', {'_token':token(form), 'email':'dosenpbkk@its.ac.id', 'password':'demo12345'}, contains='Narafin AI Coach')
+                assert 'Portofolio Akademik PBKK' in body and 'Mahasiswa Uji W6' not in body
+                request('/logout', {'_token':token(body)}, contains='Portal PBKK')
+                form = request('/login', contains='Masuk ke portofolio')
+                request('/login', {'_token':token(form), 'email':email, 'password':'password123'}, contains='Belum ada proyek')
             else:
                 request('/about', contains='Profil dan proyek PBKK')
                 request('/project-idea', contains='Usulan Agentic AI')
@@ -184,7 +201,7 @@ def check_week(week, php):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--php', default='php')
-    parser.add_argument('--week', type=int, choices=[1,2,3,4],
-                        default=int(re.search(r'PBKK W(\d)', (ROOT / '.env.example').read_text())[1]))
+    parser.add_argument('--week', type=int, choices=[1,2,3,4,6], default=6)
+    parser.add_argument('--php-arg', action='append', default=[], help='Additional PHP option, for example -d or extension=pdo_mysql')
     args = parser.parse_args()
-    check_week(args.week, args.php)
+    check_week(args.week, args.php, args.php_arg)

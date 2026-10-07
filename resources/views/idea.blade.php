@@ -664,6 +664,23 @@
     </div>
 </section>
 
+<section id="kirim-ide" class="mt-12">
+    <p class="eyebrow">Partisipasi mahasiswa</p>
+    <h2 class="mt-2 text-2xl font-bold">Kirim ide Agentic AI</h2>
+    <p class="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-300">Tuliskan ide pengembangan yang dapat ditinjau sebelum diimplementasikan.</p>
+    @if(session('status'))
+        <x-status-banner class="mt-5">{{ session('status') }} @if(session('ide')){{ session('ide.deskripsi') }}@endif</x-status-banner>
+    @endif
+    <form method="POST" action="{{ route('idea.store') }}" class="feature-card mt-5 grid gap-5 p-6 sm:grid-cols-2">
+        @csrf
+        <input type="hidden" name="mode" value="{{ $dark ? 'dark' : 'light' }}">
+        <div><label for="ide-nama" class="text-sm font-semibold">Nama pengusul</label><input id="ide-nama" class="field" name="nama" value="{{ old('nama') }}" required minlength="3">@error('nama')<p class="error">{{ $message }}</p>@enderror</div>
+        <div><label for="ide-judul" class="text-sm font-semibold">Judul ide</label><input id="ide-judul" class="field" name="judul" value="{{ old('judul') }}" required minlength="5">@error('judul')<p class="error">{{ $message }}</p>@enderror</div>
+        <div class="sm:col-span-2"><label for="ide-deskripsi" class="text-sm font-semibold">Deskripsi ide</label><textarea id="ide-deskripsi" class="field min-h-32" name="deskripsi" required minlength="15">{{ old('deskripsi') }}</textarea>@error('deskripsi')<p class="error">{{ $message }}</p>@enderror</div>
+        <div class="sm:col-span-2"><button type="submit" class="button">Kirim ide</button></div>
+    </form>
+</section>
+
 @endsection
 
 

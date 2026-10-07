@@ -29,11 +29,17 @@
             </div>
         </a>
         <div class="site-nav">
-            <a href="{{ route('home') }}" @if(request()->routeIs('home', 'beranda', 'dashboard.home')) aria-current="page" @endif>Beranda</a>
+            <a href="{{ route('home') }}" @if(request()->routeIs('home', 'beranda')) aria-current="page" @endif>Beranda</a>
             <a href="{{ route('profile') }}" @if(request()->routeIs('profile', 'mahasiswa.show', 'dashboard.mahasiswa.show', 'about')) aria-current="page" @endif>Profil</a>
             <a href="{{ route('idea') }}" @if(request()->routeIs('idea', 'idea.store', 'player.advice', 'project', 'agent', 'dashboard.agent')) aria-current="page" @endif>Ide Agentic AI</a>
             <a href="{{ route('calculator') }}" @if(request()->routeIs('calculator', 'calculate', 'ipk.*')) aria-current="page" @endif>Kalkulator</a>
             <a href="{{ route('feedback.create') }}" @if(request()->routeIs('feedback.*')) aria-current="page" @endif>Feedback</a>
+            @auth
+                <a href="{{ route('dashboard.home') }}" @if(request()->routeIs('dashboard.home')) aria-current="page" @endif>Dashboard</a>
+                <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 hover:text-[#013880] dark:text-slate-300 dark:hover:bg-slate-800">Keluar</button></form>
+            @else
+                <a href="{{ route('login') }}" @if(request()->routeIs('login', 'register')) aria-current="page" @endif>Masuk</a>
+            @endauth
         </div>
     </nav>
 </header>
