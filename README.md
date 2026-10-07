@@ -17,7 +17,7 @@ npm run build
 php artisan serve --host=127.0.0.1 --port=8006
 ```
 
-Jika memakai runtime lokal pada repo ini, jalankan `. .\dev-env.ps1` sebelum perintah PHP. Akses `http://127.0.0.1:8006`. Akun demo lokal: `dosenpbkk@its.ac.id` / `demo12345`. Ganti kata sandi ini jika menggunakan data di luar lingkungan pengembangan. Pendaftaran mahasiswa mensyaratkan email `@student.its.ac.id`.
+Jika memakai runtime lokal pada repo ini, jalankan `. .\dev-env.ps1` sebelum perintah PHP. Untuk server lokal tersebut, gunakan `php -S 127.0.0.1:8006 -t public vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php` agar ekstensi MySQL yang diaktifkan helper tetap tersedia pada proses server. Akses `http://127.0.0.1:8006`. Akun demo lokal: `dosenpbkk@its.ac.id` / `demo12345`. Ganti kata sandi ini jika menggunakan data di luar lingkungan pengembangan. Pendaftaran mahasiswa mensyaratkan email `@student.its.ac.id`.
 
 File `.env`, `vendor/`, dan `node_modules/` diabaikan Git. `api_key_secure` menggunakan cast terenkripsi Laravel dan tidak pernah ditampilkan di halaman. Nilai kolom ini boleh kosong sampai integrasi API diperlukan.
 
