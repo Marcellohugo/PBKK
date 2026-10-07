@@ -1,27 +1,13 @@
-# Narafin AI Coach — W4
+# Analitika Narafin AI Coach
 
-Tema ini dikembangkan dari bagian **Saran** pada **Analitika Pemain pada Sesi** di [Narafin](https://narafin.org), yang dibaca pada 29 September 2026. Narafin adalah dashboard analitika permainan Cashflowpoly. Halaman sumber memerlukan login; kredensial tidak disimpan dalam proyek ini.
+Narafin AI Coach berfokus pada bagian **Saran** dari **Analitika Pemain pada Sesi** di [Narafin](https://narafin.org). Halaman sumber memerlukan login; kredensial sumber tidak disimpan di aplikasi ini. Contoh metrik dalam aplikasi merupakan data ilustrasi, bukan rekaman pribadi pemain.
 
-## Masalah dan rencana AI
+## Alur saat ini
 
-Saran yang ada berkaitan dengan perubahan koin, pemerataan pemasukan, biaya dan pemakaian bahan, keuntungan pesanan, pinjaman, risiko, target finansial, penggunaan aksi, kebutuhan, donasi, serta sumber poin kebahagiaan. Rencana AI adalah merangkai indikator tersebut menjadi penjelasan yang sesuai konteks pemain dan menyebut bukti dari metrik, bukan sekadar satu pesan untuk satu angka.
+Instruktur memilih mode Pemula atau Mahir dan memasukkan koin awal/akhir, bahan terkumpul/terpakai, serta sisa pinjaman untuk mode Mahir. Aplikasi memvalidasi input, menghitung perubahan kas dan persentase pemakaian bahan, kemudian menyusun saran yang menyebut bukti angkanya. Nilai yang belum tersedia tetap kosong dan tidak dianggap nol. Mode Pemula tidak memproses pinjaman.
 
-Perhitungan tetap dilakukan oleh aplikasi. LLM direncanakan menerima ringkasan metrik, mode permainan, dan aturan sesi, lalu menyusun penjelasan serta langkah yang dapat ditinjau instruktur. AI tidak melakukan aksi permainan atau transaksi.
+Hasil saat ini diturunkan dari aturan deterministik. Tidak ada panggilan LLM, sinkronisasi dengan Narafin, aksi permainan, atau transaksi otomatis. Instruktur perlu meninjau saran dalam konteks sesi.
 
-- Pisahkan Pemula dan Mahir; pinjaman dan risiko tidak diterapkan pada Pemula.
-- Pertahankan data tidak tersedia sebagai nilai kosong, bukan nol.
-- Jelaskan penyebab dan kaitan antarmetrik, dengan kas dan kewajiban sebagai pertimbangan awal.
-- Gunakan bahasa evaluasi keputusan permainan, bukan penilaian kemampuan finansial pemain.
+## Arah pengembangan
 
-## Perkembangan W1–W4
-
-| Branch | Fitur tahap tersebut | Langkah berikutnya |
-| --- | --- | --- |
-| w1 | Identifikasi masalah, sumber, input, dan alur AI pada halaman ide | Memetakan saran menurut mode |
-| w2 | Routing dan pilihan mode untuk melihat skenario kas, bahan, dan pinjaman | Mengumpulkan evaluasi saran |
-| w3 | Form evaluasi saran dengan mode/indikator, validasi ITS, CSRF, dan CAPTCHA | Mengolah metrik dari form |
-| w4 | Demo input metrik, saran dengan bukti angka, prioritas pinjaman, dan data kosong | Integrasi LLM serta metrik Narafin yang berizin |
-
-**Tahap branch ini: W4 — Prototipe saran berbasis metrik.** Mengolah input metrik simulasi menjadi saran dengan bukti angka dan prioritas.
-
-Contoh pada proyek adalah data simulasi yang dibuat untuk latihan, bukan rekaman pribadi pemain Narafin. Demo W4 menggunakan aturan deterministik sebagai dasar sebelum integrasi LLM. Tidak ada panggilan API AI, sinkronisasi Narafin, atau klaim bahwa model sudah berjalan.
+Saran berikutnya dapat menghubungkan perubahan koin, pemerataan pemasukan, biaya dan penggunaan bahan, keuntungan pesanan, pinjaman, risiko, target finansial, penggunaan aksi, kebutuhan, donasi, serta sumber poin kebahagiaan. Model bahasa dapat menerima ringkasan metrik yang diizinkan untuk menjelaskan hubungan antarmetrik, sementara perhitungan tetap dilakukan oleh aplikasi dan hasilnya tetap ditinjau instruktur.

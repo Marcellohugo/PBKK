@@ -3,11 +3,11 @@
 @section('content')
 <div class="max-w-4xl border-b border-slate-200/80 pb-6 dark:border-slate-800/80">
     <div class="badge-its">
-        Layanan Komputasi & Akademik
+        Alat hitung tambahan
     </div>
-    <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">Kalkulator Akademik & Aritmetika</h1>
+    <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">Kalkulator</h1>
     <p class="mt-3 max-w-2xl text-base text-slate-600 dark:text-slate-300">
-        Dua modul perhitungan dalam satu antarmuka terpadu. Hasil diproses menggunakan parameter rute Laravel dengan validasi server-side.
+        Hitung operasi dasar dan rata-rata IP dua semester. Setiap input diperiksa sebelum hasil ditampilkan.
     </p>
 </div>
 

@@ -5,11 +5,10 @@ return [
     'departemen' => 'Teknik Informatika',
     'kampus' => 'Institut Teknologi Sepuluh Nopember',
     'tema' => env('PROJECT_THEME', 'Narafin AI Coach — Saran Analitika Pemain'),
-    'deskripsi' => 'Rencana asisten AI untuk menjelaskan hasil permainan Cashflowpoly dan menyusun saran yang mempertimbangkan kas, pemakaian bahan, serta pinjaman sesuai mode permainan.',
+    'deskripsi' => 'Analitika sesi Cashflowpoly yang menjelaskan perubahan kas, pemakaian bahan, dan pinjaman sesuai mode permainan dengan bukti angka yang dapat diperiksa.',
     'ai' => [
-        'minggu' => 4,
-        'fase' => 'Prototipe saran berbasis metrik',
-        'capaian' => 'Mengolah input metrik simulasi menjadi saran dengan bukti angka dan prioritas.',
+        'fase' => 'Analitika berbasis metrik',
+        'capaian' => 'Mengolah metrik sesi menjadi saran dengan bukti angka dan prioritas yang jelas.',
         'sumber' => 'https://narafin.org',
         'skenario' => [
             ['indikator' => 'kas', 'judul' => 'Kas menurun', 'bukti' => 'Contoh simulasi: koin awal 20, koin akhir 12; perubahan kas -40%.', 'saran' => 'Tinjau pengeluaran terbesar dan pilih aksi yang menghasilkan koin sebelum menambah belanja.', 'mode' => 'semua'],

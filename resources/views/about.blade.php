@@ -2,41 +2,19 @@
 @section('title', 'Tentang')
 @section('content')
 <div class="max-w-4xl border-b border-slate-200/80 pb-6 dark:border-slate-800/80">
-    <div class="badge-its">
-        Tentang Aplikasi & Kurikulum
-    </div>
-    <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">Profil dan proyek PBKK</h1>
-    <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">
-        Aplikasi ini menampilkan profil mahasiswa, rancangan Narafin AI Coach, kalkulator, dan formulir masukan dengan Laravel.
-    </p>
+    <span class="badge-its">Tentang produk</span>
+    <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">Narafin AI Coach</h1>
+    <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">Alat bantu bagi instruktur Cashflowpoly untuk mengubah metrik sesi menjadi saran yang jelas dan dapat diperiksa. Fokusnya adalah menjelaskan alasan di balik perubahan kas, penggunaan bahan, dan pinjaman.</p>
 </div>
 
 <div class="mt-8 grid gap-6 md:grid-cols-2">
-    <div class="rounded-xl border border-slate-200/90 bg-white p-6 shadow-2xs dark:border-slate-800 dark:bg-[#0b1c33]">
-        <p class="eyebrow">Institusi & Program</p>
-        <h2 class="mt-2 text-xl font-bold tracking-tight text-slate-900 dark:text-white">Teknik Informatika ITS</h2>
-        <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-            Departemen Teknik Informatika di Institut Teknologi Sepuluh Nopember, Surabaya, mengintegrasikan rekayasa perangkat lunak modern, kecerdasan buatan, dan arsitektur kerangka kerja web.
-        </p>
-    </div>
-
-    <div class="rounded-xl border border-slate-200/90 bg-white p-6 shadow-2xs dark:border-slate-800 dark:bg-[#0b1c33]">
-        <p class="eyebrow">Evolusi Proyek</p>
-        <h2 class="mt-2 text-xl font-bold tracking-tight text-slate-900 dark:text-white">Perkembangan Bertahap</h2>
-        <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-            Dikembangkan secara bertahap dari branch W1 (konsep & routing) hingga W4 (Blade template modern & Vite asset bundler) dengan arsitektur MVC terstandarisasi.
-        </p>
-    </div>
+    <div class="feature-card p-6"><p class="eyebrow">Cara kerja</p><h2 class="mt-2 text-xl font-bold">Dari angka ke keputusan</h2><p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">Masukkan metrik permainan dan pilih mode. Sistem menghitung perubahan, memeriksa kondisi yang relevan, lalu menampilkan saran beserta bukti angkanya.</p></div>
+    <div class="feature-card p-6"><p class="eyebrow">Batas hasil</p><h2 class="mt-2 text-xl font-bold">Instruktur tetap menentukan langkah</h2><p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">Saran saat ini berbasis aturan yang dapat ditelusuri. Hasil membantu diskusi dan perlu ditinjau bersama konteks sesi sebelum digunakan.</p></div>
 </div>
 
 <div class="mt-8 flex flex-wrap gap-4">
-    <a class="button" href="{{ route('profile') }}">
-        <span>Lihat profil</span>
-        <span aria-hidden="true">→</span>
-    </a>
-    <a class="button-secondary" href="{{ route('project') }}">
-        <span>Baca ide proyek</span>
-    </a>
+    <a class="button" href="{{ route('idea') }}#demo-saran">Coba analitika <span aria-hidden="true">→</span></a>
+    <a class="button-secondary" href="{{ route('profile') }}">Tentang pengembang</a>
+    <a class="button-secondary" href="{{ route('calculator') }}">Alat hitung tambahan</a>
 </div>
 @endsection
-

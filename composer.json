@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "pbkk/academic-sandbox",
+    "name": "narafin/ai-coach",
     "type": "project",
-    "description": "Tugas PBKK pertemuan 1 sampai 6",
+    "description": "Analitika sesi Cashflowpoly dengan saran berbasis metrik",
     "keywords": [
         "laravel",
         "framework"

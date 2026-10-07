@@ -1,0 +1,19 @@
+services:
+  db:
+    image: postgres:16.15
+    environment:
+      POSTGRES_DB: narafin
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: localw6test
+    ports:
+      - "127.0.0.1:5436:5432"
+    volumes:
+      - narafin_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d narafin"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  narafin_pgdata:

@@ -19,8 +19,8 @@
 <section class="mt-10" aria-labelledby="alur">
     <div class="flex items-center justify-between">
         <div>
-            <h2 id="alur" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Rancangan alur Agentic AI</h2>
-            <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Alur berikut merupakan rencana proyek akhir. Demo metrik di bawah menjalankan perhitungan lokal.</p>
+            <h2 id="alur" class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Cara kerja analitika</h2>
+            <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Masukkan metrik sesi untuk melihat perhitungan dan saran yang dapat ditelusuri.</p>
         </div>
     </div>
     <ol class="mt-6 grid gap-5 sm:grid-cols-2">
@@ -36,21 +36,21 @@
 
 <div class="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200/90 bg-white p-4 text-sm text-slate-600 dark:border-slate-800 dark:bg-[#0b1c33] dark:text-slate-400">
     <p>
-        Referensi rancangan: <a class="underline font-semibold text-[#013880] dark:text-sky-300" href="{{ $profil['ai']['sumber'] }}" target="_blank" rel="noopener">Narafin · Analitika Pemain, bagian Saran</a>. Pengembangan berikutnya mengirim metrik yang sudah dihitung ke LLM untuk penjelasan kontekstual dan tinjauan instruktur.
+        Konteks permainan: <a class="underline font-semibold text-[#013880] dark:text-sky-300" href="{{ $profil['ai']['sumber'] }}" target="_blank" rel="noopener">Narafin · Analitika Pemain, bagian Saran</a>. Hasil di halaman ini berbasis aturan; integrasi model bahasa masih dalam pengembangan.
     </p>
     <a class="text-link shrink-0" href="{{ route('agent') }}">Jelajahi skenario agent menurut mode →</a>
 </div>
 
-{{-- Bedah Komprehensif Halaman Sumber: Analitika Pemain Narafin.org (6 Area Analisis) --}}
+{{-- Contoh sesi untuk memahami indikator yang dipakai --}}
 <section class="mt-12 rounded-xl border border-slate-200/90 bg-white p-6 shadow-2xs dark:border-slate-800 dark:bg-[#0b1c33] sm:p-7" aria-labelledby="narafin-source-title">
     <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200/80 pb-4 dark:border-slate-800">
         <div>
-            <div class="badge-its mb-1">Studi Kasus Halaman Sumber</div>
+            <div class="badge-its mb-1">Contoh sesi</div>
             <h2 id="narafin-source-title" class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                 Analitika Pemain pada Sesi · Narafin.org (Sesi #24)
             </h2>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Investigasi langsung antarmuka asli Cashflowpoly (Akun Instruktur: <code class="font-mono text-[#013880] dark:text-sky-300">pratama</code> · Pemain: <strong>Marco</strong>, Urutan Giliran 2).
+                Ilustrasi metrik Cashflowpoly untuk menunjukkan cara membaca hasil analitika.
             </p>
         </div>
         <div class="flex flex-wrap items-center gap-2">
@@ -58,7 +58,7 @@
                 Pemain: Marco · Sesi #24
             </span>
             <span class="rounded-md bg-blue-50 px-3 py-1 text-xs font-bold text-[#013880] border border-blue-200/80 dark:bg-blue-950/40 dark:text-sky-300 dark:border-blue-800">
-                6 Area Terdokumentasi
+                6 area analisis
             </span>
         </div>
     </div>
@@ -665,7 +665,7 @@
 </section>
 
 <section id="kirim-ide" class="mt-12">
-    <p class="eyebrow">Partisipasi mahasiswa</p>
+    <p class="eyebrow">Ide dari pengguna</p>
     <h2 class="mt-2 text-2xl font-bold">Kirim ide Agentic AI</h2>
     <p class="mt-2 max-w-2xl text-sm text-slate-600 dark:text-slate-300">Tuliskan ide pengembangan yang dapat ditinjau sebelum diimplementasikan.</p>
     @if(session('status'))

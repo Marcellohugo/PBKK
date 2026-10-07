@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'index'])->name('home');
 Route::get('/beranda', [PageController::class, 'index'])->name('beranda');
-Route::get('/profil-mahasiswa', [PageController::class, 'profile'])->name('profile');
+Route::get('/pengembang', [PageController::class, 'profile'])->name('profile');
+Route::get('/profil-mahasiswa', [PageController::class, 'profile'])->name('profile.legacy');
 Route::get('/ide-agent', [PageController::class, 'idea'])->name('idea');
 Route::post('/ide-agent', [PageController::class, 'store'])->name('idea.store');
 Route::post('/saran-pemain', [PageController::class, 'recommendations'])->name('player.advice');
@@ -28,9 +29,9 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
 });
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']);
+    Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
 });
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->middleware('auth')->name('logout');
 Route::get('/feedback', [PageController::class, 'feedbackCreate'])->name('feedback.create');

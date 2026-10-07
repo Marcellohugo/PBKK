@@ -4,23 +4,22 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class PageController extends Controller
 {
     public function index(Request $request)
     {
         $data = $request->validate(['user' => 'nullable|string|max:100']);
-        $user = $data['user'] ?? config('profile.nama');
-        $profil = config('profile');
-        return view('home', compact('user', 'profil'));
+        return view('home', ['user' => $data['user'] ?? null]);
     }
 
     public function profile()
     {
         $profil = config('profile');
         $riwayat = [
-            'Profil mahasiswa, MVC, dan routing melalui PageController.',
-            'Parameter rute, named routes, dashboard, dan kalkulator IPK.',
+            'Mengembangkan alur analitika kas, bahan, dan pinjaman dari data permainan.',
+            'Menambahkan autentikasi serta penyimpanan proyek untuk setiap pengguna.',
         ];
         return view('profile', compact('profil', 'riwayat'));
     }
@@ -35,10 +34,10 @@ class PageController extends Controller
         $permainan = $request->query('permainan') ?? 'mahir';
         $profil = config('profile');
         $alur = [
-            ['judul' => 'Permintaan instruktur', 'isi' => 'Instruktur memilih pemain, sesi, dan mode permainan melalui antarmuka Livewire.'],
-            ['judul' => 'Tool pemeriksaan metrik', 'isi' => 'Backend Laravel membaca data yang diizinkan dan menghitung kas, pemakaian bahan, serta pinjaman pada mode Mahir.'],
-            ['judul' => 'Perencanaan dan analisis AI', 'isi' => 'LLM melalui Ollama atau Senopati AI merencanakan pemeriksaan, memanggil tool yang diizinkan, dan menjelaskan hasil berdasarkan bukti angka.'],
-            ['judul' => 'Tinjauan hasil', 'isi' => 'Instruktur meninjau saran sebelum membahas strategi bersama pemain. Aplikasi desktop direncanakan dikemas dengan NativePHP.'],
+            ['judul' => 'Masukan sesi', 'isi' => 'Instruktur memilih mode permainan dan memasukkan metrik pemain yang tersedia.'],
+            ['judul' => 'Pemeriksaan metrik', 'isi' => 'Sistem memvalidasi data lalu menghitung perubahan kas, pemakaian bahan, serta pinjaman pada mode Mahir.'],
+            ['judul' => 'Penyusunan saran', 'isi' => 'Aturan analitika menghubungkan hasil perhitungan dengan tindakan yang relevan dan menampilkan bukti angkanya.'],
+            ['judul' => 'Tinjauan instruktur', 'isi' => 'Instruktur menilai saran dalam konteks sesi sebelum membahas strategi bersama pemain.'],
         ];
         return view('idea', compact('profil', 'dark', 'permainan', 'alur'));
     }
@@ -167,7 +166,7 @@ class PageController extends Controller
         $skenario = array_filter($profil['ai']['skenario'], fn ($item) => $item['mode'] === 'semua' || $item['mode'] === $mode);
         $deskripsi = $tema === config('profile.tema')
             ? config('profile.deskripsi')
-            : "Rancangan asisten bertema {$tema}: menerima pertanyaan, merencanakan langkah, menggunakan tool yang diizinkan, lalu merangkum hasil untuk ditinjau pengguna.";
+            : "Skenario asisten bertema {$tema}: menerima pertanyaan, merencanakan langkah, menggunakan tool yang diizinkan, lalu merangkum hasil untuk ditinjau pengguna.";
         return view('agent', compact('tema', 'deskripsi', 'profil', 'mode', 'skenario'));
     }
 
@@ -195,7 +194,7 @@ class PageController extends Controller
     {
         return response()->view('errors.404', [], 404);
     }
-    private const KATEGORI = ['Akademik', 'Sarana Prasarana', 'Kegiatan Mahasiswa'];
+    private const KATEGORI = ['Analitika', 'Kendala aplikasi', 'Usulan fitur'];
 
     public function feedbackCreate(Request $request)
     {
@@ -228,8 +227,8 @@ class PageController extends Controller
             'required' => ':attribute wajib diisi.',
             'required_with' => 'Lengkapi mode dan indikator jika menyertakan konteks Narafin.',
             'string' => ':attribute harus berupa teks.',
-            'nama.min' => 'Nama mahasiswa minimal 3 karakter.',
-            'nama.max' => 'Nama mahasiswa maksimal 100 karakter.',
+            'nama.min' => 'Nama pengirim minimal 3 karakter.',
+            'nama.max' => 'Nama pengirim maksimal 100 karakter.',
             'email.email' => 'Masukkan alamat email yang valid.',
             'email.regex' => 'Gunakan email ITS dengan akhiran @student.its.ac.id.',
             'email.max' => 'Email maksimal 254 karakter.',
@@ -239,9 +238,10 @@ class PageController extends Controller
             'captcha.integer' => 'Jawaban matematika harus berupa bilangan bulat.',
             'mode_permainan.in' => 'Pilih mode Pemula atau Mahir.',
             'indikator.in' => 'Pilih indikator yang sesuai mode. Pinjaman hanya berlaku pada Mahir.',
-        ], ['nama' => 'Nama mahasiswa', 'email' => 'Email', 'kategori' => 'Kategori masukan', 'pesan' => 'Isi pesan', 'captcha' => 'Jawaban matematika', 'mode_permainan' => 'Mode permainan', 'indikator' => 'Indikator saran']);
+        ], ['nama' => 'Nama pengirim', 'email' => 'Email', 'kategori' => 'Kategori masukan', 'pesan' => 'Isi pesan', 'captcha' => 'Jawaban matematika', 'mode_permainan' => 'Mode permainan', 'indikator' => 'Indikator saran']);
 
         unset($data['captcha']);
+        DB::table('feedback')->insert([...$data, 'created_at' => now(), 'updated_at' => now()]);
         $request->session()->forget('captcha');
         return redirect()->route('feedback.success')->with('feedback', $data);
     }

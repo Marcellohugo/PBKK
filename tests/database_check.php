@@ -19,7 +19,7 @@ function check(bool $ok, string $message): void
 
 check(User::where('email', 'like', '%@student.its.ac.id')->has('projects', '=', 2)->count() >= 15, 'Seeder mahasiswa/proyek tidak lengkap.');
 $demo = User::where('email', 'dosenpbkk@its.ac.id')->firstOrFail();
-check($demo->projects()->count() === 2, 'Portofolio demo tidak lengkap.');
+check($demo->projects()->count() === 2, 'Proyek demo tidak lengkap.');
 
 $project = new Project;
 $project->fill(['judul' => 'Uji', 'user_id' => $demo->id, 'api_key_secure' => 'rahasia']);
@@ -37,6 +37,9 @@ try {
     $demoId = $demo->id;
     $demo->delete();
     check(! Project::where('user_id', $demoId)->exists(), 'Cascade delete tidak berlaku.');
+
+    DB::table('feedback')->insert(['nama' => 'Penguji', 'email' => 'penguji@student.its.ac.id', 'kategori' => 'Analitika', 'pesan' => 'Perhitungan kas perlu dijelaskan dengan jelas.', 'created_at' => now(), 'updated_at' => now()]);
+    check(DB::table('feedback')->where('email', 'penguji@student.its.ac.id')->exists(), 'Masukan tidak tersimpan.');
 } finally {
     DB::rollBack();
 }

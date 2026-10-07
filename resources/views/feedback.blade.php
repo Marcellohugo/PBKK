@@ -1,23 +1,23 @@
 @extends('layouts.app')
-@section('title', 'Secure Feedback Hub')
+@section('title', 'Masukan')
 @section('content')
 <div class="grid gap-8 lg:grid-cols-[1fr_1.3fr] lg:items-start">
     <div>
         <div class="badge-its">
-            Secure Feedback Hub
+            Masukan pengguna
         </div>
-        <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">Masukan akademik untuk ITS</h1>
+        <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">Bantu kami membuat saran yang lebih berguna</h1>
         <p class="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
-            Sampaikan saran mengenai akademik, sarana prasarana, atau kegiatan mahasiswa. Masukan Anda diproses secara transparan melalui sesi terverifikasi.
+            Ceritakan pengalaman menggunakan analitika, laporkan kendala, atau usulkan fitur yang membantu Anda meninjau sesi permainan.
         </p>
 
         <div class="mt-8 space-y-4">
             <div class="rounded-xl border border-slate-200/90 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-[#0b1c33]">
-                <p class="eyebrow">Jaminan Keamanan & Validasi</p>
+                <p class="eyebrow">Pengiriman terverifikasi</p>
                 <ul class="mt-3 space-y-2.5 text-sm text-slate-600 dark:text-slate-300">
                     <li class="flex items-center gap-2.5">
                         <span class="grid h-5 w-5 place-items-center rounded-full bg-blue-100 text-xs font-bold text-[#013880] dark:bg-blue-950 dark:text-sky-300">✓</span>
-                        <span>Verifikasi domain email resmi mahasiswa ITS</span>
+                        <span>Email mahasiswa ITS untuk fase akses awal</span>
                     </li>
                     <li class="flex items-center gap-2.5">
                         <span class="grid h-5 w-5 place-items-center rounded-full bg-blue-100 text-xs font-bold text-[#013880] dark:bg-blue-950 dark:text-sky-300">✓</span>
@@ -31,16 +31,16 @@
             </div>
 
             <div class="rounded-xl border border-slate-200/90 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-[#0b1c33]">
-                <p class="eyebrow">Konteks Riset Narafin (Opsional)</p>
+                <p class="eyebrow">Konteks analitika (opsional)</p>
                 <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-                    Anda juga dapat mengevaluasi skenario saran analitika pemain dari proyek Narafin dengan memilih mode permainan dan indikator yang relevan.
+                    Sertakan mode permainan dan indikator jika masukan Anda terkait saran untuk pemain.
                 </p>
             </div>
         </div>
     </div>
 
     <div class="rounded-xl border border-slate-200/90 bg-white p-6 shadow-2xs dark:border-slate-800 dark:bg-[#0b1c33] sm:p-7">
-        <h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Formulir Masukan Mahasiswa</h2>
+        <h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Tulis masukan</h2>
         <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Isi data di bawah dengan benar. Nilai isian lama dipertahankan jika terjadi kesalahan.</p>
 
         @if($errors->any())
@@ -53,7 +53,7 @@
             @csrf
 
             <div>
-                <label for="nama" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Nama mahasiswa</label>
+                <label for="nama" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Nama Anda</label>
                 <input id="nama" name="nama" type="text" class="field" value="{{ old('nama') }}" placeholder="Nama lengkap Anda" required>
                 @error('nama')<p class="error">{{ $message }}</p>@enderror
             </div>
@@ -103,7 +103,7 @@
 
             <div>
                 <label for="pesan" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Isi pesan</label>
-                <textarea id="pesan" name="pesan" rows="4" class="field" placeholder="Tulis masukan akademik atau kritik konstruktif..." minlength="15" required>{{ old('pesan') }}</textarea>
+                <textarea id="pesan" name="pesan" rows="4" class="field" placeholder="Ceritakan pengalaman atau usulan Anda..." minlength="15" required>{{ old('pesan') }}</textarea>
                 @error('pesan')<p class="error">{{ $message }}</p>@enderror
             </div>
 

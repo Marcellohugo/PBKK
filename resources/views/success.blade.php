@@ -3,7 +3,7 @@
 @section('content')
 <div class="mx-auto max-w-2xl">
     <div class="badge-its">
-        Secure Feedback Hub
+        Masukan pengguna
     </div>
     
     <div class="mt-4 rounded-lg border border-emerald-300 bg-emerald-50/90 p-5 text-emerald-950 shadow-2xs dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-100" role="status">
@@ -11,7 +11,7 @@
             <span class="grid h-8 w-8 place-items-center rounded-full bg-emerald-600 text-base font-bold text-white shadow-xs">✓</span>
             <div>
                 <p class="text-base font-bold">Terima kasih, {{ $feedback['nama'] }}.</p>
-                <p class="text-sm text-emerald-800 dark:text-emerald-200">Masukan berhasil divalidasi dan tersimpan di sesi Anda.</p>
+                <p class="text-sm text-emerald-800 dark:text-emerald-200">Masukan berhasil divalidasi dan disimpan. Terima kasih sudah membantu kami berkembang.</p>
             </div>
         </div>
     </div>
@@ -47,9 +47,7 @@
             @endif
         </div>
 
-        <p class="mt-6 border-t border-slate-200/70 pt-4 text-xs text-slate-500 dark:border-slate-800/70 dark:text-slate-400">
-            Konfirmasi ini hanya tersedia dalam sesi browser saat ini. Masukan belum disimpan atau dikirim ke departemen.
-        </p>
+        <p class="mt-6 border-t border-slate-200/70 pt-4 text-xs text-slate-500 dark:border-slate-800/70 dark:text-slate-400">Salinan konfirmasi ini tersedia selama sesi browser aktif.</p>
 
         <div class="mt-6 flex flex-wrap gap-3">
             <a class="button" href="{{ route('feedback.create') }}">Tulis masukan baru</a>

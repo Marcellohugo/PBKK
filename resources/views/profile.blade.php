@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Profil Mahasiswa')
+@section('title', 'Pengembang')
 @section('content')
 <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200/80 pb-6 dark:border-slate-800/80">
     <div class="flex items-center gap-4">
@@ -7,18 +7,18 @@
             MH
         </div>
         <div>
-            <p class="eyebrow">Profil Mahasiswa</p>
+            <p class="eyebrow">Tim produk</p>
             <h1 class="mt-1 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">{{ $profil['nama'] }}</h1>
             <p class="mt-0.5 text-sm font-semibold text-slate-500 dark:text-slate-400">NRP {{ $profil['nrp'] }} · {{ $profil['departemen'] }}</p>
         </div>
     </div>
     <span class="badge-its">
-        Status: Mahasiswa Aktif
+        Pengembang Narafin AI Coach
     </span>
 </div>
 
 <div class="mt-8 grid gap-6 md:grid-cols-2">
-    <x-info-card title="Identitas akademik" label="Biodata Resmi">
+    <x-info-card title="Tentang pengembang" label="Latar belakang">
         <dl class="space-y-3 divide-y divide-slate-100 dark:divide-slate-800 text-sm">
             <div class="pt-2 flex justify-between items-center">
                 <dt class="font-bold text-slate-700 dark:text-slate-300">NRP</dt>
@@ -39,19 +39,19 @@
         </dl>
     </x-info-card>
 
-    <x-info-card :title="$profil['tema']" label="Rencana Proyek Akhir">
+    <x-info-card :title="$profil['tema']" label="Produk yang dikembangkan">
         <p class="leading-relaxed">{{ $profil['deskripsi'] }}</p>
         <div class="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800">
             <a class="text-link" href="{{ route('idea') }}">
-                <span>Lihat alur rancangan & demo</span>
+                <span>Lihat analitika dan contoh sesi</span>
                 <span aria-hidden="true">→</span>
             </a>
         </div>
     </x-info-card>
 </div>
 
-<x-info-card class="mt-6 border-t-3 border-t-[#013880]" title="Riwayat belajar" label="Kurikulum Praktikum PBKK">
-    <p class="mb-4 text-xs font-semibold text-slate-500 dark:text-slate-400">Rangkuman capaian modul pembelajaran pada mata kuliah Pemrograman Berbasis Kerangka Kerja.</p>
+<x-info-card class="mt-6 border-t-3 border-t-[#013880]" title="Riwayat belajar dan pengembangan" label="Pengembangan produk">
+    <p class="mb-4 text-xs font-semibold text-slate-500 dark:text-slate-400">Pengalaman yang diterapkan dalam pengembangan Narafin AI Coach.</p>
     <ul class="space-y-2.5 text-sm">
         @foreach($riwayat as $item)
         <li class="flex items-start gap-3">
@@ -63,17 +63,12 @@
 </x-info-card>
 
 <section id="tentang" class="mt-12 scroll-mt-10 rounded-xl border border-slate-200/90 bg-white p-7 shadow-xs dark:border-slate-800 dark:bg-[#0b1c33]">
-    <p class="eyebrow">Informasi Institusi</p>
+    <p class="eyebrow">Latar belakang</p>
     <h2 class="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">Teknik Informatika ITS</h2>
     <p class="mt-4 max-w-3xl leading-relaxed text-slate-600 dark:text-slate-300">
-        Departemen Teknik Informatika berada di Institut Teknologi Sepuluh Nopember, Surabaya. Bidang pembelajarannya mencakup pemrograman, algoritma, rekayasa perangkat lunak, basis data, jaringan komputer, dan kecerdasan buatan. Dalam PBKK, saya menerapkan arsitektur MVC melalui Laravel.
+        Pengembang berasal dari Departemen Teknik Informatika, Institut Teknologi Sepuluh Nopember, Surabaya. Fokus pengembangannya mencakup aplikasi web, basis data, dan analitika yang mudah dipahami pengguna.
     </p>
-    <div class="mt-6">
-        <a class="text-link" href="{{ route('dashboard.mahasiswa.show', $profil['nrp']) }}">
-            <span>Lihat rute profil melalui dashboard</span>
-            <span aria-hidden="true">→</span>
-        </a>
-    </div>
+    <div class="mt-6"><a class="text-link" href="{{ route('idea') }}#demo-saran">Jelajahi analitika →</a></div>
 </section>
 @endsection
 

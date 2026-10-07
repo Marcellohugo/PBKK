@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-4xl border-b border-slate-200/80 pb-6 dark:border-slate-800/80">
     <div class="badge-its">
-        Usulan Agentic AI
+        Arsitektur analitika
     </div>
     <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">{{ $profil['tema'] }}</h1>
     <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">{{ $profil['deskripsi'] }}</p>
@@ -26,7 +26,7 @@
 
 <div class="mt-8 pt-6 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-wrap gap-4">
     <a class="button" href="{{ route('idea') }}">
-        <span>Lihat rancangan dan demo</span>
+        <span>Lihat analitika dan contoh sesi</span>
         <span aria-hidden="true">→</span>
     </a>
     <a class="button-secondary" href="{{ route('agent') }}">

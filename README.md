@@ -1,37 +1,43 @@
-# PBKK — Portofolio Akademik dan Proyek Agentic AI
+# Narafin AI Coach
 
-Marco Marcello Hugo · 5025221102. Branch `w6` mengerjakan tugas pada `pertemuan_6_lengkap-ok.pptx` dan mempertahankan fitur pertemuan 1–4. Tema utama: **Narafin AI Coach — Saran Analitika Pemain**.
+Narafin AI Coach membantu instruktur Cashflowpoly meninjau kas, pemakaian bahan, dan pinjaman pemain. Hasil analitika menyertakan angka yang menjadi dasar setiap saran, sehingga instruktur dapat memeriksanya sebelum berdiskusi dengan pemain.
 
-## Menjalankan dengan MySQL
+Analitika yang tersedia saat ini berbasis aturan dari metrik yang dimasukkan pengguna. Integrasi model bahasa dan sinkronisasi data permainan belum tersedia.
 
-Butuh PHP 8.3+, ekstensi `pdo_mysql`, Composer, Node.js, dan MySQL 8. Buat database kosong bernama `pbkk_w6`, lalu dari root proyek:
+## Menjalankan lokal
+
+Butuh PHP 8.3+ dengan ekstensi `pdo_pgsql`, Composer, Node.js, dan Docker Compose (atau PostgreSQL 16 yang sudah berjalan). Konfigurasi contoh memakai PostgreSQL pada `127.0.0.1:5436` dengan volume persisten.
 
 ```powershell
+docker compose up -d --wait
 composer install
 Copy-Item .env.example .env
 php artisan key:generate
-# Isi DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD di .env
 php artisan migrate --seed
 npm ci
 npm run build
 php artisan serve --host=127.0.0.1 --port=8006
 ```
 
-Jika memakai runtime lokal pada repo ini, jalankan `. .\dev-env.ps1` sebelum perintah PHP. Untuk server lokal tersebut, gunakan `php -S 127.0.0.1:8006 -t public vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php` agar ekstensi MySQL yang diaktifkan helper tetap tersedia pada proses server. Akses `http://127.0.0.1:8006`. Akun demo lokal: `dosenpbkk@its.ac.id` / `demo12345`. Ganti kata sandi ini jika menggunakan data di luar lingkungan pengembangan. Pendaftaran mahasiswa mensyaratkan email `@student.its.ac.id`.
+Jika memakai PostgreSQL sendiri, ubah `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` dalam `.env`. Pada komputer pengembangan ini, `. .\dev-env.ps1` mengaktifkan runtime PHP dan ekstensi PostgreSQL. Untuk server dengan helper tersebut, jalankan `Set-Location public` lalu `php -S 127.0.0.1:8006 ..\vendor\laravel\framework\src\Illuminate\Foundation\resources\server.php` agar ekstensi tetap aktif pada proses server.
 
-File `.env`, `vendor/`, dan `node_modules/` diabaikan Git. `api_key_secure` menggunakan cast terenkripsi Laravel dan tidak pernah ditampilkan di halaman. Nilai kolom ini boleh kosong sampai integrasi API diperlukan.
+Aplikasi tersedia di `http://127.0.0.1:8006`. Akun demo: `dosenpbkk@its.ac.id` dengan kata sandi `demo12345`. Akun dan kata sandi ini hanya untuk data lokal hasil seeding. Pendaftaran mandiri saat ini dibatasi ke alamat `@student.its.ac.id`.
 
-## Fitur database
+## Fitur
 
-- Tabel `users` memuat nama, email unik, dan kata sandi yang di-hash; tabel `projects` memuat `judul`, `deskripsi` opsional, `tema_agent` default `Ollama`, `api_key_secure`, dan `user_id` yang merujuk ke users dengan cascade delete.
-- Relasi Eloquent `User::projects()` dan `Project::user()`. `Project::$fillable` hanya mengizinkan kolom konten, sehingga pemilik dan API key tidak dapat diubah lewat mass assignment biasa.
-- `ProjectFactory` membuat data Agentic AI; `DatabaseSeeder` membuat 15 mahasiswa × 2 proyek serta satu akun demo dengan 2 proyek portofolio.
-- Login dan pendaftaran menggunakan alur autentikasi Laravel Breeze. `/dashboard` hanya bisa diakses pengguna login; query mengambil proyek milik pengguna tersebut dan mengurutkannya dari yang terbaru.
+- Akun pengguna, login, dan dashboard berisi proyek milik pengguna yang sedang masuk, diurutkan dari yang terbaru.
+- Analitika sesi mode Pemula dan Mahir, validasi metrik, dan saran yang menampilkan bukti angka.
+- Formulir masukan dengan verifikasi sederhana, validasi, dan penyimpanan di PostgreSQL.
+- Relasi `users`–`projects` dengan email unik dan cascade delete. API key proyek menggunakan cast terenkripsi dan tidak ditampilkan di antarmuka.
+- Seeder membuat 15 akun uji dengan dua proyek per akun serta satu akun demo dengan dua proyek.
 
-## Fitur dari pertemuan sebelumnya
-
-Beranda, profil, ide Agentic AI dan demo saran, kalkulator, feedback, rute parameter, komponen Blade, validasi, dan layout ITS tetap tersedia. Dokumentasi rancangan AI ada di [docs/narafin-ai.md](docs/narafin-ai.md).
+Penjelasan sumber metrik dan batas sistem ada di [docs/narafin-ai.md](docs/narafin-ai.md). `.env`, `vendor/`, dan `node_modules/` diabaikan Git.
 
 ## Verifikasi
 
-Jalankan `python tests/check.py --php C:\path\to\php.exe` untuk pemeriksaan HTTP dan `php tests/database_check.php` untuk seed, relasi, enkripsi, serta cascade. Jika PHP Anda memiliki ekstensi MySQL yang tersedia tetapi belum aktif, tambahkan `--php-arg=-d --php-arg=extension=pdo_mysql` pada tes Python dan jalankan tes database dengan `php -d extension=pdo_mysql tests/database_check.php`. Pengujian migrasi dilakukan pada MySQL 8 menggunakan `php artisan migrate:fresh --seed`.
+```powershell
+php tests/database_check.php
+python tests/check.py --php C:\path\to\php.exe
+```
+
+Jika ekstensi PostgreSQL tersedia tetapi belum aktif pada PHP CLI, tambahkan `-d extension=pdo_pgsql` pada perintah PHP, atau `--php-arg=-d --php-arg=extension=pdo_pgsql` pada tes Python. Gunakan `php artisan migrate:fresh --seed` hanya pada database pengembangan yang boleh direset.

@@ -24,8 +24,8 @@ class DatabaseSeeder extends Seeder
             'tema_agent' => 'Ollama',
         ]);
         $demo->projects()->create([
-            'judul' => 'Portofolio Akademik PBKK',
-            'deskripsi' => 'Rangkuman eksplorasi routing, Blade, validasi, autentikasi, dan relasi data proyek.',
+            'judul' => 'Analitika Sesi Cashflowpoly',
+            'deskripsi' => 'Analisis perubahan koin, utilisasi bahan, dan pinjaman untuk membantu instruktur meninjau strategi pemain.',
             'tema_agent' => 'Senopati AI',
         ]);
     }

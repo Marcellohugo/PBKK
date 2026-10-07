@@ -2,9 +2,9 @@
 @section('title', 'Daftar')
 @section('content')
 <div class="mx-auto max-w-md">
-    <p class="eyebrow">Akun mahasiswa</p>
-    <h1 class="mt-2 text-3xl font-extrabold tracking-tight">Buat akun portofolio</h1>
-    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Gunakan alamat @student.its.ac.id untuk menyimpan identitas akun.</p>
+    <p class="eyebrow">Akun Narafin</p>
+    <h1 class="mt-2 text-3xl font-extrabold tracking-tight">Buat akun baru</h1>
+    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Saat ini pendaftaran tersedia untuk pengguna dengan email mahasiswa ITS.</p>
     <form method="POST" action="{{ route('register') }}" class="feature-card mt-6 space-y-5 p-6">
         @csrf
         <div><label for="name" class="text-sm font-semibold">Nama lengkap</label><input id="name" class="field" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name">@error('name')<p class="error">{{ $message }}</p>@enderror</div>

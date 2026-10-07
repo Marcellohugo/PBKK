@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-4xl border-b border-slate-200/80 pb-6 dark:border-slate-800/80">
     <div class="badge-its">
-        Rancangan Agentic AI
+        Skenario analitika
     </div>
     <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">{{ $tema }}</h1>
     <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">{{ $deskripsi }}</p>
@@ -28,7 +28,7 @@
     <div class="flex items-center justify-between border-b border-slate-200/80 pb-4 dark:border-slate-800/80">
         <div>
             <h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Skenario saran · Mode {{ ucfirst($mode) }}</h2>
-            <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Kasus uji pemetaan keluaran AI berdasarkan indikator permainan.</p>
+            <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">Contoh saran berdasarkan indikator permainan yang tersedia.</p>
         </div>
         <span class="badge-its">
             {{ count($skenario) }} skenario aktif

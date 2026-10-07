@@ -2,13 +2,13 @@
 @section('title', 'Dashboard')
 @section('content')
 <section class="hero-panel border-t-4 border-t-[#f8ac18] p-6 sm:p-8">
-    <p class="text-xs font-bold uppercase tracking-widest text-amber-300">Portofolio pribadi</p>
+    <p class="text-xs font-bold uppercase tracking-widest text-amber-300">Ruang kerja</p>
     <h1 class="mt-3 text-3xl font-extrabold text-white">Selamat datang, {{ auth()->user()->name }}</h1>
     <p class="mt-2 text-sm text-blue-100">{{ auth()->user()->email }} · {{ $projects->count() }} proyek tersimpan</p>
 </section>
 
 <div class="mt-10 flex flex-wrap items-end justify-between gap-3">
-    <div><p class="eyebrow">Database proyek</p><h2 class="mt-1 text-2xl font-bold">Proyek Agentic AI saya</h2></div>
+    <div><p class="eyebrow">Proyek Anda</p><h2 class="mt-1 text-2xl font-bold">Aktivitas Agentic AI</h2></div>
     <span class="badge-its">Terbaru dahulu</span>
 </div>
 
@@ -21,6 +21,6 @@
         <p class="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{{ $project->deskripsi ?: 'Belum ada deskripsi.' }}</p>
     </article>
 @empty
-    <div class="feature-card mt-5 p-8 text-center"><h3 class="text-lg font-bold">Belum ada proyek</h3><p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Proyek portofolio Anda akan muncul di sini setelah ditambahkan.</p></div>
+    <div class="feature-card mt-5 p-8 text-center"><h3 class="text-lg font-bold">Belum ada proyek</h3><p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Proyek yang terhubung dengan akun Anda akan muncul di sini.</p></div>
 @endforelse
 @endsection

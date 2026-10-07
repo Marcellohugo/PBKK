@@ -3,8 +3,8 @@ $pbkkTools = Join-Path $env:LOCALAPPDATA 'PBKK\tools'
 $pbkkNode = Join-Path $env:USERPROFILE '.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin'
 if (Test-Path "$pbkkTools\php\php.exe") {
     $env:PATH = "$pbkkTools\php;$env:PATH"
-    # Runtime PBKK lokal menyediakan DLL MySQL, tetapi belum mengaktifkannya di php.ini.
-    function global:php { & (Join-Path $env:LOCALAPPDATA 'PBKK\tools\php\php.exe') -d extension=pdo_mysql @args }
+    # Runtime PHP lokal menyediakan DLL PostgreSQL, tetapi belum mengaktifkannya di php.ini.
+    function global:php { & (Join-Path $env:LOCALAPPDATA 'PBKK\tools\php\php.exe') -d extension=pdo_pgsql @args }
 }
 if (Test-Path "$pbkkNode\node.exe") { $env:PATH = "$pbkkNode;$env:PATH" }
 if (Test-Path "$pbkkTools\composer.phar") {
