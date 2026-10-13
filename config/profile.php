@@ -5,7 +5,7 @@ return [
     'departemen' => 'Teknik Informatika',
     'kampus' => 'Institut Teknologi Sepuluh Nopember',
     'tema' => env('PROJECT_THEME', 'ResearchMate AI'),
-    'deskripsi' => 'Ruang kerja penelitian untuk merencanakan pertanyaan riset, mengelola proyek, dan meninjau literatur dengan bukti yang dapat ditelusuri.',
+    'deskripsi' => 'Ruang kerja penelitian untuk merumuskan pertanyaan, mencatat jumlah sumber, meninjau langkah awal, dan menyimpan rencana ke akun.',
     'ai' => [
         'fase' => 'Perencanaan riset',
         'capaian' => 'Membantu peneliti menyiapkan sumber dan memeriksa langkah awal riset.',

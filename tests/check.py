@@ -48,6 +48,12 @@ def check_week(week, php, php_args=()):
             assert match, "CSRF token missing"
             return match[1]
 
+        def field(body, name):
+            match = re.search(r'name="' + re.escape(name) + r'" value="([^"]+)"', body)
+            assert match, f"{name} missing"
+            return match[1]
+
+        test_account_email = None
         try:
             for _ in range(100):
                 try:
@@ -122,22 +128,41 @@ def check_week(week, php, php_args=()):
                 request("/dashboard", contains="Masuk ke ruang kerja")
                 register = request("/register?next=research", contains="Buat akun baru")
                 email = f"researchcheck{time.time_ns()}@example.com"
+                test_account_email = email
                 account = {"_token": token(register), "name": "Peneliti Uji", "email": email,
                            "password": "password123", "password_confirmation": "password123"}
                 request("/register", {**account, "email": "invalid"}, contains="email", referer="/register?next=research")
                 idea = request("/register", account, contains="Simpan rencana ke Proyek Saya", referer="/register?next=research")
                 assert 'class="dark"' in idea
+                old_plan_token = field(idea, "plan_token")
                 dashboard = request("/dashboard", contains="Belum ada proyek")
                 assert "Pemetaan literatur pembelajaran adaptif" not in dashboard
-                invalid = request("/ide-agent", {"_token": token(idea), "judul": "x", "deskripsi": "pendek"},
+                invalid = request("/ide-agent", {"_token": token(idea), "judul": "x", "deskripsi": "pendek",
+                                                       "plan_token": old_plan_token},
                                   contains="minimal 5 karakter", referer="/ide-agent")
                 assert "Belum ada proyek" in request("/dashboard")
-                saved = request("/ide-agent", {"_token": token(invalid), "judul": "Peta pembelajaran adaptif pribadi",
-                                                 "deskripsi": "Meninjau dampak pembelajaran adaptif pada mahasiswa."},
+                revised_plan = {**plan, "_token": token(invalid), "jumlah_artikel": 5,
+                                "pertanyaan_riset": "Bagaimana metode adaptif meningkatkan partisipasi mahasiswa?"}
+                revised = request("/rencana-riset", revised_plan, contains="5 artikel dan 2 PDF", referer="/ide-agent?mode=dark")
+                new_plan_token = field(revised, "plan_token")
+                assert new_plan_token != old_plan_token
+                project_data = {"judul": "Peta pembelajaran adaptif pribadi",
+                                "deskripsi": "Meninjau dampak pembelajaran adaptif pada mahasiswa."}
+                request("/ide-agent", {"_token": token(revised), "plan_token": old_plan_token, **project_data},
+                        contains="Rencana berubah", referer="/ide-agent?mode=dark")
+                assert "Belum ada proyek" in request("/dashboard")
+                saved = request("/ide-agent", {"_token": token(revised), "judul": "Peta pembelajaran adaptif pribadi",
+                                                 "deskripsi": "Meninjau dampak pembelajaran adaptif pada mahasiswa.",
+                                                 "plan_token": new_plan_token},
                                 contains="berhasil disimpan", referer="/ide-agent")
-                assert "4 artikel" in saved and "2 PDF" in saved
+                assert "5 artikel" in saved and "2 PDF" in saved
+                assert revised_plan["pertanyaan_riset"] in saved
                 assert "Rencana belum disimpan" not in saved
+                project_path = re.search(r"/dashboard/proyek/\d+", saved).group()
+                detail = request(project_path, contains=revised_plan["pertanyaan_riset"])
+                assert "5 artikel" in detail and "2 PDF" in detail and "Dokumen lokal" in detail
                 request("/logout", {"_token": token(saved)}, contains="ResearchMate AI")
+                request(project_path, contains="Masuk ke ruang kerja")
                 guest_form = request("/ide-agent", contains="Rencana penelitian")
                 request("/rencana-riset", {**plan, "_token": token(guest_form)}, contains="4 artikel dan 2 PDF")
                 login = request("/login?next=research", contains="Masuk ke ruang kerja")
@@ -146,6 +171,10 @@ def check_week(week, php, php_args=()):
                 assert "4 artikel" in resumed and 'class="dark"' in resumed
                 demo = request("/dashboard", contains="Pemetaan literatur pembelajaran adaptif")
                 assert "Peta pembelajaran adaptif pribadi" not in demo
+                request(project_path, status=404)
+                reset = request("/rencana-riset/baru", {"_token": token(demo)}, contains="Rencana penelitian", referer="/dashboard")
+                assert "Simpan rencana ke Proyek Saya" not in reset
+                assert "Rencana belum disimpan" not in request("/dashboard")
             print(f"PASS W{week}: routes, validation, sessions, and feature checks")
         except Exception:
             log.seek(0)
@@ -154,6 +183,12 @@ def check_week(week, php, php_args=()):
         finally:
             server.terminate()
             server.wait(timeout=10)
+            if test_account_email:
+                cleanup = ("require 'vendor/autoload.php'; $app = require 'bootstrap/app.php'; "
+                           "$app->make(\\Illuminate\\Contracts\\Console\\Kernel::class)->bootstrap(); "
+                           "\\App\\Models\\User::where('email', getenv('CHECK_EMAIL'))->delete();")
+                subprocess.check_call([php, *php_args, "-r", cleanup], cwd=ROOT,
+                                      env=dict(env, CHECK_EMAIL=test_account_email))
 
 
 if __name__ == "__main__":

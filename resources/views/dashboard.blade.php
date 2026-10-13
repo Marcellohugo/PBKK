@@ -6,7 +6,7 @@
     <p class="text-xs font-bold uppercase tracking-wider text-amber-300">Ruang kerja pribadi</p>
     <h1 class="mt-3 text-3xl font-extrabold text-white">Proyek riset {{ auth()->user()->name }}</h1>
     <p class="mt-2 text-sm text-blue-100">{{ $projects->count() }} proyek tersimpan pada akun Anda.</p>
-    <a class="button-gold mt-6" href="{{ route('idea') }}#demo-saran">Mulai rencana baru →</a>
+    <form method="POST" action="{{ route('research.new') }}" class="mt-6">@csrf<button class="button-gold" type="submit">Mulai rencana baru →</button></form>
 </section>
 
 @if(session()->has('research_plan'))
@@ -35,12 +35,13 @@
                 <p class="mt-2 text-slate-600 dark:text-slate-300">{{ $project->jumlah_artikel }} artikel · {{ $project->jumlah_pdf }} PDF dicatat · {{ $project->mode_riset === 'dokumen_lokal' ? 'Dokumen lokal' : 'Penelusuran literatur' }}</p>
             </div>
         @endif
+        <a class="text-link mt-4" href="{{ route('dashboard.project.show', $project) }}">Lihat detail proyek →</a>
     </article>
 @empty
     <div class="feature-card mt-4">
         <h3 class="text-lg font-bold">Belum ada proyek</h3>
         <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Mulai dari pertanyaan riset, tinjau sumber, lalu simpan rencana pertama Anda di sini.</p>
-        <a class="text-link mt-4" href="{{ route('idea') }}#demo-saran">Buat rencana riset →</a>
+        <form method="POST" action="{{ route('research.new') }}" class="mt-4">@csrf<button class="text-link" type="submit">Buat rencana riset →</button></form>
     </div>
 @endforelse
 @endsection

@@ -1,6 +1,6 @@
-# Portal Akademik PBKK
+# ITS Academic · ResearchMate AI
 
-Portal Akademik PBKK memuat profil mahasiswa, kalkulator, masukan pengguna, dan ResearchMate AI sebagai proyek riset. Di ResearchMate, pengguna menulis pertanyaan, meninjau kesiapan literatur, masuk atau mendaftar, lalu menyimpan rencana sebagai proyek pribadi. Tinjauan menggunakan aturan dari input pengguna; pembacaan PDF, pencarian artikel otomatis, dan panggilan model AI belum tersedia.
+ITS Academic memuat profil akademik, kalkulator, masukan pengguna, dan ResearchMate AI untuk merencanakan riset. Di ResearchMate, pengguna menulis pertanyaan, meninjau kesiapan literatur, masuk atau mendaftar, lalu menyimpan rencana sebagai proyek pribadi yang dapat dibuka lagi. Tinjauan menggunakan aturan dari input pengguna; pembacaan PDF, pencarian artikel otomatis, dan panggilan model AI belum tersedia.
 
 ## Menjalankan lokal
 
@@ -22,7 +22,7 @@ Atur `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` pada 
 ## Fitur
 
 - Registrasi, login, dan dashboard yang hanya menampilkan proyek milik akun aktif, terbaru lebih dulu.
-- Alur rencana riset sampai penyimpanan proyek; draf disimpan dalam sesi ketika pengguna perlu masuk atau mendaftar.
+- Alur rencana riset sampai penyimpanan proyek; draf disimpan dalam sesi ketika pengguna perlu masuk atau mendaftar. Rencana tersimpan dapat dibuka dari dashboard, dan pengguna dapat memulai rencana baru tanpa membawa draf sebelumnya.
 - Relasi `users`–`projects`, email unik, penghapusan berantai, proteksi mass assignment, dan cast terenkripsi untuk API key.
 - Formulir rencana riset dengan validasi, hasil berbasis input, dan penjelasan bukti angka. Pertanyaan serta jumlah sumber disimpan bersama proyek.
 - Formulir masukan dengan validasi server, perlindungan CSRF, pemulihan input lama, dan tantangan matematika berbasis sesi.

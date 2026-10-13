@@ -13,4 +13,11 @@ class DashboardController extends Controller
 
         return view('dashboard', compact('projects'));
     }
+
+    public function show(Request $request, string $project): View
+    {
+        $project = $request->user()->projects()->findOrFail($project);
+
+        return view('project-detail', compact('project'));
+    }
 }

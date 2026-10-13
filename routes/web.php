@@ -13,6 +13,7 @@ Route::get('/profil-mahasiswa', [PageController::class, 'profile'])->name('profi
 Route::get('/ide-agent', [PageController::class, 'idea'])->name('idea');
 Route::post('/ide-agent', [PageController::class, 'store'])->name('idea.store');
 Route::post('/rencana-riset', [PageController::class, 'recommendations'])->name('research.plan');
+Route::post('/rencana-riset/baru', [PageController::class, 'newPlan'])->name('research.new');
 
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/project-idea', [PageController::class, 'project'])->name('project');
@@ -24,6 +25,7 @@ Route::get('/ipk', [PageController::class, 'ipkForm'])->name('ipk.form');
 Route::get('/hitung-ipk/{ip1}/{ip2}', [PageController::class, 'ipk'])->name('ipk.calculate');
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->middleware('auth')->name('home');
+    Route::get('/proyek/{project}', [DashboardController::class, 'show'])->middleware('auth')->whereNumber('project')->name('project.show');
     Route::get('/mahasiswa/{nrp}', [PageController::class, 'student'])->where('nrp', '[0-9]{10}')->name('mahasiswa.show');
     Route::get('/agent/{tema?}', [PageController::class, 'agent'])->name('agent');
 });

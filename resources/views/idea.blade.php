@@ -5,7 +5,7 @@
     <div>
         <span class="badge-its">ResearchMate AI</span>
         <h1 class="mt-4 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">Dari pertanyaan menjadi proyek riset</h1>
-        <p class="mt-3 max-w-3xl text-slate-600 dark:text-slate-300">Tinjau kesiapan sumber, simpan rencana ke akun Anda, lalu lanjutkan dari daftar proyek.</p>
+        <p class="mt-3 max-w-3xl text-slate-600 dark:text-slate-300">Tinjau kesiapan sumber, simpan rencana ke akun Anda, lalu lihat hasilnya di Proyek Saya.</p>
     </div>
     <a class="text-link" href="{{ route('idea', ['mode' => $dark ? 'light' : 'dark']) }}">{{ $dark ? 'Mode terang' : 'Mode gelap' }}</a>
 </div>
@@ -28,6 +28,11 @@
         <p class="eyebrow">Langkah 1–2 · Mulai di sini</p>
         <h2 class="mt-2 text-2xl font-bold">Rencana penelitian</h2>
         <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Masukkan pertanyaan dan jumlah sumber yang sudah dicatat. Belum perlu mengunggah dokumen.</p>
+        @if($plan)
+            <p class="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950 dark:border-blue-900 dark:bg-blue-950/40 dark:text-blue-100">Rencana di samping sudah ditinjau. Jika Anda mengubah isinya, tinjau ulang sebelum menyimpan proyek.</p>
+            <details class="mt-5" @if($errors->has('pertanyaan_riset') || $errors->has('mode_riset') || $errors->has('jumlah_artikel') || $errors->has('jumlah_pdf')) open @endif>
+                <summary class="cursor-pointer text-sm font-bold text-[#2563eb] dark:text-sky-400">Ubah rencana dan tinjau ulang</summary>
+        @endif
         <form method="POST" action="{{ route('research.plan') }}" class="mt-5 space-y-4">
             @csrf
             <input type="hidden" name="mode" value="{{ $dark ? 'dark' : 'light' }}">
@@ -50,13 +55,18 @@
             </div>
             <button class="button w-full" type="submit">Tinjau langkah berikutnya</button>
         </form>
+        @if($plan)</details>@endif
     </section>
 
     <section id="hasil" class="feature-card scroll-mt-24" aria-live="polite">
         <p class="eyebrow">Langkah 3 · Hasil tinjauan</p>
         <h2 class="mt-2 text-2xl font-bold">Apa yang perlu dilakukan?</h2>
         @if($plan)
-            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ $plan['data']['jumlah_artikel'] }} artikel dan {{ $plan['data']['jumlah_pdf'] }} PDF dicatat untuk pertanyaan ini. Periksa sumber asli sebelum memakai hasilnya.</p>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Hasil ini berlaku untuk rencana yang sudah Anda tinjau berikut:</p>
+            <div class="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm dark:border-slate-700 dark:bg-slate-800/60">
+                <p class="font-semibold">{{ $plan['data']['pertanyaan_riset'] }}</p>
+                <p class="mt-2 text-slate-600 dark:text-slate-300">{{ $plan['data']['jumlah_artikel'] }} artikel · {{ $plan['data']['jumlah_pdf'] }} PDF · {{ $plan['data']['mode_riset'] === 'dokumen_lokal' ? 'Dokumen lokal' : 'Penelusuran literatur' }}</p>
+            </div>
             <div class="mt-5 space-y-3">
                 @foreach($plan['saran'] as $item)
                     <article class="rounded-lg border border-blue-100 bg-blue-50/60 p-4 dark:border-slate-700 dark:bg-slate-800/60">
@@ -82,6 +92,7 @@
         <form method="POST" action="{{ route('idea.store') }}" class="mt-5 grid gap-4 md:grid-cols-2">
             @csrf
             <input type="hidden" name="mode" value="{{ $dark ? 'dark' : 'light' }}">
+            <input type="hidden" name="plan_token" value="{{ $plan['token'] ?? '' }}">
             <div><label for="judul" class="text-sm font-semibold">Judul proyek</label><input id="judul" name="judul" class="field mt-1" value="{{ old('judul', $draft['judul'] ?? '') }}" minlength="5" maxlength="150" required>@error('judul')<p class="error">{{ $message }}</p>@enderror</div>
             <div><label for="deskripsi" class="text-sm font-semibold">Ringkasan proyek</label><textarea id="deskripsi" name="deskripsi" rows="3" class="field mt-1" minlength="15" maxlength="3000" required>{{ old('deskripsi', $draft['deskripsi'] ?? $plan['data']['pertanyaan_riset']) }}</textarea>@error('deskripsi')<p class="error">{{ $message }}</p>@enderror</div>
             <div class="md:col-span-2"><button class="button" type="submit">Simpan proyek ke akun</button></div>

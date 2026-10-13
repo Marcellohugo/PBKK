@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class PageController extends Controller
 {
@@ -17,11 +18,11 @@ class PageController extends Controller
     public function profile()
     {
         $profil = config('profile');
-        $riwayat = [
-            'Merancang ruang kerja untuk meninjau pertanyaan riset dan kesiapan literatur.',
-            'Menambahkan autentikasi serta daftar proyek riset milik setiap pengguna.',
+        $layanan = [
+            'Tulis pertanyaan riset dan catat jumlah sumber untuk meninjau langkah awal.',
+            'Simpan rencana ke akun agar dapat dibuka kembali di Proyek Saya.',
         ];
-        return view('profile', compact('profil', 'riwayat'));
+        return view('profile', compact('profil', 'layanan'));
     }
 
     public function idea(Request $request)
@@ -83,23 +84,39 @@ class PageController extends Controller
                 'isi' => 'Bandingkan metode dan hasil sumber yang relevan. Kandidat celah riset perlu dukungan kutipan yang dapat diperiksa.',
             ],
         ];
-        $request->session()->put('research_plan', ['data' => $data, 'saran' => $saran]);
+        $request->session()->put('research_plan', ['data' => $data, 'saran' => $saran, 'token' => Str::random(40)]);
         return redirect()->to(route('idea', ['mode' => $data['mode'] ?? 'light']).'#hasil');
+    }
+
+    public function newPlan(Request $request)
+    {
+        $request->session()->forget(['research_plan', 'research_idea']);
+
+        return redirect()->to(route('idea').'#demo-saran');
     }
 
     public function store(Request $request)
     {
+        $plan = $request->session()->get('research_plan');
+        if ($request->user() && ! $plan) {
+            return redirect()->route('idea')
+                ->withErrors(['judul' => 'Tinjau rencana riset terlebih dahulu sebelum menyimpan proyek.'])
+                ->withInput();
+        }
+
         $data = $request->validate([
             'nama' => $request->user() ? 'nullable|string|min:3|max:100' : 'required|string|min:3|max:100',
             'judul' => 'required|string|min:5|max:150',
             'deskripsi' => 'required|string|min:15|max:3000',
             'mode' => ['nullable', Rule::in(['light', 'dark'])],
+            'plan_token' => $request->user() ? 'required|string|size:40' : 'nullable',
         ], [
             'required' => ':attribute wajib diisi.',
             'string' => ':attribute harus berupa teks.',
             'min' => ':attribute minimal :min karakter.',
             'max' => ':attribute maksimal :max karakter.',
             'in' => 'Pilihan :attribute tidak valid.',
+            'plan_token.required' => 'Tinjau ulang rencana riset sebelum menyimpan proyek.',
         ], ['nama' => 'Nama pengusul', 'judul' => 'Judul ide', 'deskripsi' => 'Deskripsi', 'mode' => 'mode']);
         if (! $request->user()) {
             $request->session()->put('research_idea', $data);
@@ -111,10 +128,9 @@ class PageController extends Controller
                 ->with('ide', $data);
         }
 
-        $plan = $request->session()->get('research_plan.data');
-        if (! $plan) {
+        if (! hash_equals($plan['token'] ?? '', $data['plan_token'])) {
             return redirect()->route('idea', ['mode' => $data['mode'] ?? 'light'])
-                ->withErrors(['judul' => 'Tinjau rencana riset terlebih dahulu sebelum menyimpan proyek.'])
+                ->withErrors(['judul' => 'Rencana berubah. Tinjau hasil terbaru sebelum menyimpan proyek.'])
                 ->withInput();
         }
 
@@ -122,10 +138,10 @@ class PageController extends Controller
             'judul' => $data['judul'],
             'deskripsi' => $data['deskripsi'],
             'tema_agent' => config('profile.tema'),
-            'pertanyaan_riset' => $plan['pertanyaan_riset'],
-            'mode_riset' => $plan['mode_riset'],
-            'jumlah_artikel' => $plan['jumlah_artikel'],
-            'jumlah_pdf' => $plan['jumlah_pdf'],
+            'pertanyaan_riset' => $plan['data']['pertanyaan_riset'],
+            'mode_riset' => $plan['data']['mode_riset'],
+            'jumlah_artikel' => $plan['data']['jumlah_artikel'],
+            'jumlah_pdf' => $plan['data']['jumlah_pdf'],
         ]);
         $request->session()->forget(['research_plan', 'research_idea']);
 
