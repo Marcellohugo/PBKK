@@ -67,7 +67,7 @@
     /* ResearchMate Accent Highlight Button */
     .button-gold {
         @apply inline-flex items-center justify-center gap-2 rounded-md
-               bg-[#93c5fd] px-5 py-2.5
+               bg-[#f8ac18] px-5 py-2.5
                text-sm font-bold text-slate-950 shadow-xs
                transition-all duration-150
                hover:bg-[#e59b0f] hover:shadow-sm
