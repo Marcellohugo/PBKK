@@ -19,13 +19,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $demo->projects()->create([
-            'judul' => 'Narafin AI Coach — Saran Analitika Pemain',
-            'deskripsi' => 'Asisten untuk meninjau kas, pemakaian bahan, dan pinjaman pemain Cashflowpoly berdasarkan bukti angka.',
+            'judul' => 'Pemetaan literatur pembelajaran adaptif',
+            'deskripsi' => 'Menata pertanyaan riset, sumber artikel, dan kandidat celah penelitian untuk ditinjau ulang.',
             'tema_agent' => 'Ollama',
         ]);
         $demo->projects()->create([
-            'judul' => 'Analitika Sesi Cashflowpoly',
-            'deskripsi' => 'Analisis perubahan koin, utilisasi bahan, dan pinjaman untuk membantu instruktur meninjau strategi pemain.',
+            'judul' => 'Verifikasi bukti pada penelitian kesehatan digital',
+            'deskripsi' => 'Membandingkan metode studi dan menyusun ringkasan dengan rujukan yang dapat diperiksa.',
             'tema_agent' => 'Senopati AI',
         ]);
     }

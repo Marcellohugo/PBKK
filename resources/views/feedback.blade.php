@@ -3,12 +3,10 @@
 @section('content')
 <div class="grid gap-8 lg:grid-cols-[1fr_1.3fr] lg:items-start">
     <div>
-        <div class="badge-its">
-            Masukan pengguna
-        </div>
-        <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">Bantu kami membuat saran yang lebih berguna</h1>
+        <div class="badge-its">Masukan pengguna</div>
+        <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">Bantu ResearchMate berkembang</h1>
         <p class="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
-            Ceritakan pengalaman menggunakan analitika, laporkan kendala, atau usulkan fitur yang membantu Anda meninjau sesi permainan.
+            Ceritakan pengalaman meninjau rencana riset, laporkan kendala, atau usulkan perbaikan ruang kerja penelitian.
         </p>
 
         <div class="mt-8 space-y-4">
@@ -31,9 +29,9 @@
             </div>
 
             <div class="rounded-xl border border-slate-200/90 bg-white p-5 shadow-2xs dark:border-slate-800 dark:bg-[#0b1c33]">
-                <p class="eyebrow">Konteks analitika (opsional)</p>
+                <p class="eyebrow">Konteks riset (opsional)</p>
                 <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">
-                    Sertakan mode permainan dan indikator jika masukan Anda terkait saran untuk pemain.
+                    Pilih area produk yang terkait agar masukan Anda mudah ditinjau.
                 </p>
             </div>
         </div>
@@ -75,31 +73,11 @@
                 @error('kategori')<p class="error">{{ $message }}</p>@enderror
             </div>
 
-            <fieldset class="rounded-lg border border-slate-200 p-4 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40">
-                <legend class="px-2 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Konteks Narafin (opsional)</legend>
-                <div class="grid gap-4 sm:grid-cols-2 mt-2">
-                    <div>
-                        <label for="mode_permainan" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Mode permainan</label>
-                        <select id="mode_permainan" name="mode_permainan" class="field text-sm">
-                            <option value="">Tanpa konteks</option>
-                            @foreach(['pemula' => 'Pemula', 'mahir' => 'Mahir'] as $value => $label)
-                                <option value="{{ $value }}" @selected(old('mode_permainan') === $value)>{{ $label }}</option>
-                            @endforeach
-                        </select>
-                        @error('mode_permainan')<p class="error">{{ $message }}</p>@enderror
-                    </div>
-                    <div>
-                        <label for="indikator" class="block text-xs font-semibold text-slate-700 dark:text-slate-300">Indikator</label>
-                        <select id="indikator" name="indikator" class="field text-sm">
-                            <option value="">Tanpa indikator</option>
-                            @foreach($profil['ai']['indikator'] as $value => $label)
-                                <option value="{{ $value }}" @selected(old('indikator') === $value)>{{ $label }}</option>
-                            @endforeach
-                        </select>
-                        @error('indikator')<p class="error">{{ $message }}</p>@enderror
-                    </div>
-                </div>
-            </fieldset>
+            <div>
+                <label for="konteks" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Konteks riset (opsional)</label>
+                <select id="konteks" name="konteks" class="field mt-1"><option value="">Umum</option>@foreach(['proyek' => 'Proyek', 'dokumen' => 'Dokumen', 'literatur' => 'Literatur', 'agen' => 'Agen riset', 'laporan' => 'Laporan'] as $value => $label)<option value="{{ $value }}" @selected(old('konteks') === $value)>{{ $label }}</option>@endforeach</select>
+                @error('konteks')<p class="error">{{ $message }}</p>@enderror
+            </div>
 
             <div>
                 <label for="pesan" class="block text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Isi pesan</label>

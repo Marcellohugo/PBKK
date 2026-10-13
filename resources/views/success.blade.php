@@ -40,9 +40,9 @@
                 </div>
             </div>
 
-            @if(!empty($feedback['mode_permainan']) && !empty($feedback['indikator']))
+            @if(!empty($feedback['konteks']))
             <div class="rounded-lg border border-blue-200 bg-blue-50/60 p-3.5 text-xs text-[#013880] dark:border-blue-900 dark:bg-blue-950/40 dark:text-sky-200">
-                <span class="font-bold">Konteks Narafin:</span> Mode {{ ucfirst($feedback['mode_permainan']) }} · {{ config('profile.ai.indikator.'.$feedback['indikator']) }}
+                <span class="font-bold">Konteks riset:</span> {{ ucfirst($feedback['konteks']) }}
             </div>
             @endif
         </div>

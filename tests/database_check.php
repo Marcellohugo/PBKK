@@ -38,7 +38,7 @@ try {
     $demo->delete();
     check(! Project::where('user_id', $demoId)->exists(), 'Cascade delete tidak berlaku.');
 
-    DB::table('feedback')->insert(['nama' => 'Penguji', 'email' => 'penguji@student.its.ac.id', 'kategori' => 'Analitika', 'pesan' => 'Perhitungan kas perlu dijelaskan dengan jelas.', 'created_at' => now(), 'updated_at' => now()]);
+    DB::table('feedback')->insert(['nama' => 'Penguji', 'email' => 'penguji@student.its.ac.id', 'kategori' => 'Akademik', 'konteks' => 'literatur', 'pesan' => 'Sumber literatur perlu ditinjau dengan jelas.', 'created_at' => now(), 'updated_at' => now()]);
     check(DB::table('feedback')->where('email', 'penguji@student.its.ac.id')->exists(), 'Masukan tidak tersimpan.');
 } finally {
     DB::rollBack();

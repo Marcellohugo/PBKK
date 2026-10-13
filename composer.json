@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "narafin/ai-coach",
+    "name": "researchmate/workspace",
     "type": "project",
-    "description": "Analitika sesi Cashflowpoly dengan saran berbasis metrik",
+    "description": "Ruang kerja penelitian ResearchMate AI",
     "keywords": [
         "laravel",
         "framework"

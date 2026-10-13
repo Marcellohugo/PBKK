@@ -1,37 +1,16 @@
 @extends('layouts.app')
-@section('title', 'Ide Proyek')
+@section('title', 'Konsep produk')
 @section('content')
-<div class="max-w-4xl border-b border-slate-200/80 pb-6 dark:border-slate-800/80">
-    <div class="badge-its">
-        Arsitektur analitika
+<div class="max-w-4xl">
+    <span class="badge-its">Konsep ResearchMate</span>
+    <h1 class="mt-4 text-4xl font-extrabold tracking-tight">{{ $profil['tema'] }}</h1>
+    <p class="mt-4 text-slate-600 dark:text-slate-300">{{ $profil['deskripsi'] }}</p>
+    <div class="mt-8 grid gap-4 md:grid-cols-3">
+        <x-info-card title="Pertanyaan" label="Awal">Tentukan topik, tujuan, dan pertanyaan penelitian.</x-info-card>
+        <x-info-card title="Literatur" label="Bukti">Kelola artikel dan PDF, lalu bandingkan metode serta temuan.</x-info-card>
+        <x-info-card title="Laporan" label="Hasil">Susun ringkasan dan kandidat celah riset dengan sumber yang dapat diverifikasi.</x-info-card>
     </div>
-    <h1 class="mt-3 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">{{ $profil['tema'] }}</h1>
-    <p class="mt-4 text-base leading-relaxed text-slate-600 dark:text-slate-300">{{ $profil['deskripsi'] }}</p>
-</div>
-
-<div class="mt-8">
-    <h2 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Arsitektur Aliran Data & Keputusan</h2>
-    <div class="mt-6 grid gap-6 md:grid-cols-3">
-        <x-info-card title="Masukan" label="Data" class="border-t-4 border-t-[#013880]">
-            <p class="leading-relaxed">Instruktur memilih pemain, sesi, dan mode permainan.</p>
-        </x-info-card>
-        <x-info-card title="Analisis" label="Proses" class="border-t-4 border-t-[#f8ac18]">
-            <p class="leading-relaxed">Aplikasi menghitung kas, penggunaan bahan, dan pinjaman yang tersedia.</p>
-        </x-info-card>
-        <x-info-card title="Saran" label="Keluaran" class="border-t-4 border-t-[#001e3d] dark:border-t-sky-400">
-            <p class="leading-relaxed">Hasil berbasis bukti disajikan untuk ditinjau instruktur.</p>
-        </x-info-card>
-    </div>
-</div>
-
-<div class="mt-8 pt-6 border-t border-slate-200/80 dark:border-slate-800/80 flex flex-wrap gap-4">
-    <a class="button" href="{{ route('idea') }}">
-        <span>Lihat analitika dan contoh sesi</span>
-        <span aria-hidden="true">→</span>
-    </a>
-    <a class="button-secondary" href="{{ route('agent') }}">
-        <span>Jelajahi skenario agent</span>
-    </a>
+    <p class="mt-6 text-sm text-slate-500 dark:text-slate-400">Pengelolaan PDF, pencarian literatur, dan agen AI penuh merupakan arah platform ResearchMate; alur yang tersedia di aplikasi ini adalah tinjauan rencana awal.</p>
+    <a class="button mt-6" href="{{ route('idea') }}">Tinjau rencana riset</a>
 </div>
 @endsection
-

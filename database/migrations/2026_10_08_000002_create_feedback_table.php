@@ -14,8 +14,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('kategori');
             $table->text('pesan');
-            $table->string('mode_permainan')->nullable();
-            $table->string('indikator')->nullable();
+            $table->string('konteks')->nullable();
             $table->timestamps();
         });
     }

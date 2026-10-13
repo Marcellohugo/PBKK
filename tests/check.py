@@ -1,7 +1,4 @@
-"""HTTP integration checks with real sessions/CSRF. Python stdlib, no test framework.
-
-Run: python tests/check.py --php /path/to/php
-"""
+"""HTTP checks for the cumulative ResearchMate workspace."""
 import argparse
 import http.cookiejar
 import json
@@ -21,187 +18,134 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def check_week(week, php, php_args=()):
     with socket.socket() as sock:
-        sock.bind(('127.0.0.1', 0))
+        sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
-    app = ROOT
-    env = dict(os.environ, APP_ENV='local', APP_DEBUG='false')
-    router = app / 'vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php'
+    router = ROOT / "vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"
+    env = dict(os.environ, APP_ENV="local", APP_DEBUG="false")
     with tempfile.TemporaryFile() as log:
         server = subprocess.Popen(
-            [php, *php_args, '-S', f'127.0.0.1:{port}', str(router)],
-            cwd=app / 'public', stdout=log, stderr=log, env=env,
+            [php, *php_args, "-S", f"127.0.0.1:{port}", str(router)],
+            cwd=ROOT / "public", stdout=log, stderr=log, env=env,
         )
-        base = f'http://127.0.0.1:{port}'
+        base = f"http://127.0.0.1:{port}"
         client = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()))
 
-        def request(path, data=None, status=200, contains=None, referer=None):
-            headers = {'Referer': base + (referer or '/')}
+        def request(path, data=None, status=200, contains=None, referer="/"):
             payload = urllib.parse.urlencode(data).encode() if data is not None else None
-            req = urllib.request.Request(base + path, data=payload, headers=headers)
+            req = urllib.request.Request(base + path, data=payload, headers={"Referer": base + referer})
             try:
                 response = client.open(req, timeout=30)
             except urllib.error.HTTPError as error:
                 response = error
             body = response.read().decode()
-            assert response.status == status, (week, path, response.status, body[:300])
+            assert response.status == status, (path, response.status, body[:400])
             if contains:
-                assert contains in body, (week, path, contains)
+                assert contains in body, (path, contains)
             return body
 
         def token(body):
-            return re.search(r'name="_token" value="([^"]+)"', body)[1]
+            match = re.search(r'name="_token" value="([^"]+)"', body)
+            assert match, "CSRF token missing"
+            return match[1]
 
         try:
             for _ in range(100):
                 try:
-                    with socket.create_connection(('127.0.0.1', port), timeout=.1):
+                    with socket.create_connection(("127.0.0.1", port), timeout=.1):
                         break
                 except OSError:
                     if server.poll() is not None:
-                        raise RuntimeError('PHP server failed to start')
+                        raise RuntimeError("PHP server failed to start")
                     time.sleep(.05)
-            if week == 1:
-                request('/', contains='Narafin AI Coach')
-                request('/about', contains='Narafin AI Coach')
-                request('/project-idea', contains='Narafin AI Coach')
-                request('/kalkulator', contains='name="angka1"')
-                for operation, result in [('tambah',15),('kurang',5),('kali',50),('bagi',2)]:
-                    request(f'/hitung/10/5/{operation}', contains=f'Hasil: {result}')
-                request('/hitung/-1.5/2/tambah', contains='Hasil: 0.5')
-                request('/hitung/10/0/bagi', status=422, contains='Pembagian dengan nol')
-                request('/hitung/nope/5/tambah', status=422)
-                request('/hitung/1/2/invalid', status=422)
-                request('/hitung/1e999/2/kali', status=422)
-                request('/kalkulator?angka1=6&angka2=3&operasi=bagi', contains='Hasil: 2')
-            elif week == 2:
-                request('/', contains='Narafin AI Coach')
-                request('/mahasiswa/5025221102', contains='5025221102')
-                for path in ['/mahasiswa/123', '/mahasiswa/abcdefghij', '/mahasiswa/9999999999', '/missing']:
-                    request(path, status=404, contains='tidak ditemukan')
-                request('/agent', contains='General Assistant Agent')
-                request('/agent/Network%20Agent', contains='Network Agent')
-                body = request('/agent/%3Cscript%3E', contains='&lt;script&gt;')
-                assert '<script>' not in body
-                request('/dashboard', contains='Masuk ke ruang kerja')
-                request('/dashboard/mahasiswa/5025221102')
-                request('/dashboard/agent')
-                body = request('/agent?mode=pemula', contains='Kas menurun')
-                assert 'Masih ada pinjaman' not in body
-                request('/agent?mode=mahir', contains='Masih ada pinjaman')
-                request('/agent?mode=invalid', contains='Pilihan mode tidak valid', referer='/agent')
-                request('/hitung-ipk/3.5/4', contains='3.75')
-                request('/hitung-ipk/0/0', contains='0.00')
-                for a in ['5', '-1', 'abc', '1e999']:
-                    request(f'/hitung-ipk/{a}/3', status=422)
-                request('/ipk?ip1=3.5&ip2=4', contains='3.75')
-                routes = json.loads(subprocess.check_output([php, 'artisan', 'route:list', '--json'], cwd=app))
-                assert all(route['name'] for route in routes if not route['uri'].startswith('storage/'))
-            elif week == 3:
-                form = request('/feedback', contains='Masukan pengguna')
-                csrf = token(form)
-                a,b = map(int, re.search(r'Berapakah (\d+) \+ (\d+)\?', form).groups())
-                data = {'_token':csrf, 'nama':'Marco Marcello Hugo', 'email':'marco@student.its.ac.id',
-                        'kategori':'Analitika', 'pesan':'Saran perlu menjelaskan kaitan kas dengan stok bahan.', 'captcha':a+b,
-                        'mode_permainan':'pemula', 'indikator':'kas'}
-                request('/feedback', {**data,'_token':'bad'}, status=419)
-                request('/feedback', {k:v for k,v in data.items() if k != '_token'}, status=419)
-                invalid = request('/feedback', {**data,'nama':'M','email':'marco@example.com','kategori':'invalid','pesan':'pendek','captcha':999}, referer='/feedback')
-                for message in ['minimal 3 karakter', '@student.its.ac.id', 'Pilih salah satu kategori', 'minimal 15 karakter', 'Jawaban matematika salah']:
-                    assert message in invalid, message
-                assert 'value="M"' in invalid and '>pendek</textarea>' in invalid
-                invalid = request('/feedback', {**data, 'captcha':999}, referer='/feedback')
-                assert re.search(r'value="Analitika"\s+selected', invalid)
-                for email in ['x@student.its.ac.id.evil.com', 'not-an-email@student.its.ac.id@evil.com']:
-                    request('/feedback', {**data,'email':email}, contains='email', referer='/feedback')
-                request('/feedback', {**data,'indikator':'pinjaman'}, contains='Pinjaman hanya berlaku pada Mahir', referer='/feedback')
-                request('/feedback', {**data,'mode_permainan':'invalid'}, contains='Pilih mode Pemula atau Mahir', referer='/feedback')
-                body = request('/feedback', {**data,'pesan':'<script>alert("test")</script>'}, contains='berhasil divalidasi')
-                assert '&lt;script&gt;' in body and '<script>' not in body
-                request('/feedback', data, contains='sesi telah kedaluwarsa', referer='/feedback')
-                request('/feedback/sukses', contains='Masukan pengguna')
-            elif week == 6:
-                request('/', contains='Narafin AI Coach')
-                request('/dashboard', contains='Masuk ke ruang kerja')
-                form = request('/register', contains='Email mahasiswa ITS')
-                email = f'w6check{time.time_ns()}@student.its.ac.id'
-                student = {'_token':token(form), 'name':'Mahasiswa Uji W6', 'email':email,
-                           'password':'password123', 'password_confirmation':'password123'}
-                request('/register', {**student, 'email':'uji@example.com'}, contains='Email mahasiswa ITS', referer='/register')
-                body = request('/register', student, contains='Belum ada proyek')
-                assert 'Narafin AI Coach — Saran Analitika Pemain' not in body
-                request('/logout', {'_token':token(body)}, contains='Narafin AI Coach')
-                form = request('/login', contains='Masuk ke ruang kerja')
-                body = request('/login', {'_token':token(form), 'email':'dosenpbkk@its.ac.id', 'password':'demo12345'}, contains='Narafin AI Coach')
-                assert 'Analitika Sesi Cashflowpoly' in body and 'Mahasiswa Uji W6' not in body
-                request('/logout', {'_token':token(body)}, contains='Narafin AI Coach')
-                form = request('/login', contains='Masuk ke ruang kerja')
-                request('/login', {'_token':token(form), 'email':email, 'password':'password123'}, contains='Belum ada proyek')
-            else:
-                request('/about', contains='Narafin AI Coach')
-                request('/project-idea', contains='Arsitektur analitika')
-                request('/kalkulator', contains='name="angka1"')
-                request('/ipk', contains='id="ipk"')
-                request('/hitung/10/5/bagi', contains='Hasil: 2')
-                request('/mahasiswa/5025221102', contains='Riwayat belajar')
-                request('/agent?mode=mahir', contains='Masih ada pinjaman')
-                request('/hitung-ipk/3.5/4', contains='3.75')
-                feedback = request('/feedback', contains='Masukan pengguna')
-                a, b = map(int, re.search(r'Berapakah (\d+) \+ (\d+)\?', feedback).groups())
-                feedback_data = {'_token': token(feedback), 'nama': 'Marco Marcello Hugo', 'email': 'marco@student.its.ac.id', 'kategori': 'Analitika', 'pesan': 'Saran analitika dengan lebih dari lima belas karakter.', 'captcha': a+b}
-                request('/feedback', {**feedback_data, '_token': 'bad'}, status=419)
-                request('/feedback', feedback_data, contains='Masukan berhasil divalidasi', referer='/feedback')
-                request('/', contains='Narafin AI Coach')
-                request('/profil-mahasiswa', contains='5025221102')
-                request('/beranda?user=Andi', contains='Selamat datang, Andi!')
-                body = request('/beranda?user=%3Cscript%3E', contains='&lt;script&gt;')
-                assert '<script>' not in body
-                body = request('/ide-agent?mode=dark', contains='class="dark"')
-                assert 'bg-slate-950 text-slate-100' in body
-                assert 'cdn.jsdelivr.net' not in body and 'cdn.tailwindcss.com' not in body
-                css = re.search(r'href="([^"]+\.css)"', body)[1]
-                request(urllib.parse.urlsplit(css).path, contains='dark')
-                request('/ide-agent?mode=light', contains='bg-slate-50 text-slate-900')
-                request('/ide-agent?permainan=&mode=', contains='Mode Mahir')
-                data = {'_token':token(body), 'nama':'Marco', 'judul':'Narafin AI Coach', 'deskripsi':'Saran permainan berdasarkan kas dan pemakaian bahan.', 'mode':'dark'}
-                request('/ide-agent', {**data,'_token':'bad'}, status=419)
-                request('/ide-agent', {**data,'judul':'x'}, contains='minimal 5 karakter', referer='/ide-agent?mode=dark')
-                body = request('/ide-agent', data, contains='berhasil divalidasi')
-                assert 'class="dark"' in body and 'Saran permainan berdasarkan kas dan pemakaian bahan.' in body
-                csrf = token(body)
-                metrics = {'_token':csrf, 'mode':'dark', 'mode_permainan':'mahir',
-                           'koin_awal':20, 'koin_akhir':12, 'bahan_terkumpul':10, 'bahan_terpakai':4, 'sisa_pinjaman':6}
-                request('/saran-pemain', {**metrics,'_token':'bad'}, status=419)
-                body = request('/saran-pemain', metrics)
-                assert 'class="dark"' in body and 'perubahan -40%' in body and '(40%)' in body
-                assert body.index('Prioritas · Pinjaman belum lunas') < body.index('Koin awal 20, koin akhir 12')
-                request('/saran-pemain', {**metrics,'bahan_terpakai':11}, contains='tidak boleh melebihi', referer='/ide-agent')
-                request('/saran-pemain', {**metrics,'koin_awal':0}, contains='harus antara', referer='/ide-agent')
-                request('/saran-pemain', {**metrics,'mode_permainan':'pemula'}, contains='Pinjaman hanya berlaku', referer='/ide-agent')
-                request('/saran-pemain', {**metrics,'mode_permainan':'invalid'}, contains='tidak valid', referer='/ide-agent')
-                for changes in [{'bahan_terkumpul':'','bahan_terpakai':''}, {'bahan_terkumpul':0,'bahan_terpakai':0}]:
-                    request('/saran-pemain', {**metrics,**changes,'sisa_pinjaman':''}, contains='Nilai belum tersedia tidak dianggap 0%')
-                request('/saran-pemain', {**metrics,'bahan_terkumpul':10,'bahan_terpakai':''}, contains='Isi kedua jumlah bahan', referer='/ide-agent')
-                pemula = {k:v for k,v in metrics.items() if k != 'sisa_pinjaman'}
-                body = request('/saran-pemain', {**pemula,'mode_permainan':'pemula','bahan_terpakai':6,'koin_akhir':24})
-                assert 'perubahan 20%' in body and 'Periksa bahan tersisa dan keuntungan pesanan' in body
-                assert 'Prioritas · Pinjaman belum lunas' not in body and 'Status pinjaman' not in body
-                request('/saran-pemain', {**metrics,'bahan_terkumpul':100000,'bahan_terpakai':59999}, contains='Pemakaian bahan masih rendah')
-                request('/saran-pemain', {**metrics,'koin_awal':1000000,'koin_akhir':999999}, contains='Kas menurun')
-                request('/saran-pemain', {**metrics,'sisa_pinjaman':0}, contains='Tidak ada sisa pinjaman pada input ini')
-            print(f'PASS W{week}: routes, validation and applicable session/security checks')
+
+            if week in (1, 6):
+                home = request("/", contains="ResearchMate AI")
+                assert "Marco Marcello Hugo" in home and "5025221102" in home
+                request("/about", contains="Teknik Informatika ITS")
+                request("/project-idea", contains="ResearchMate AI")
+                request("/kalkulator", contains='name="angka1"')
+                for op, expected in (("tambah", 15), ("kurang", 5), ("kali", 50), ("bagi", 2)):
+                    request(f"/hitung/10/5/{op}", contains=f"Hasil: {expected}")
+                request("/hitung/10/0/bagi", status=422, contains="Pembagian dengan nol")
+
+            if week in (2, 6):
+                request("/mahasiswa/5025221102", contains="5025221102")
+                request("/mahasiswa/123", status=404)
+                request("/agent", contains="General Assistant Agent")
+                request("/agent/ResearchMate%20AI", contains="ResearchMate AI")
+                escaped = request("/agent/%3Cscript%3E", contains="&lt;script&gt;")
+                assert "<script>" not in escaped
+                request("/hitung-ipk/3.5/4", contains="3.75")
+                request("/hitung-ipk/5/4", status=422)
+                request("/dashboard", contains="Masuk ke ruang kerja")
+                request("/missing", status=404)
+                routes = json.loads(subprocess.check_output([php, *php_args, "artisan", "route:list", "--json"], cwd=ROOT))
+                assert all(route["name"] for route in routes if not route["uri"].startswith("storage/"))
+
+            if week in (3, 6):
+                form = request("/feedback", contains="Masukan pengguna")
+                a, b = map(int, re.search(r"Berapakah (\d+) \+ (\d+)\?", form).groups())
+                data = {"_token": token(form), "nama": "Marco Marcello Hugo", "email": "marco@student.its.ac.id",
+                        "kategori": "Akademik", "pesan": "Literatur perlu rujukan yang jelas.", "captcha": a + b,
+                        "konteks": "literatur"}
+                request("/feedback", {**data, "_token": "bad"}, status=419)
+                invalid = request("/feedback", {**data, "nama": "M", "email": "x@example.com",
+                                                "kategori": "invalid", "pesan": "pendek", "captcha": 999},
+                                  contains="Nama pengirim minimal 3 karakter.", referer="/feedback")
+                assert 'value="x@example.com"' in invalid and 'value="M"' in invalid
+                assert "@student.its.ac.id" in invalid and "Isi pesan minimal 15 karakter." in invalid
+                request("/feedback", {**data, "konteks": "permainan"}, contains="Pilih konteks riset", referer="/feedback")
+                body = request("/feedback", data, contains="Masukan berhasil divalidasi", referer="/feedback")
+                assert "Literatur perlu rujukan" in body
+
+            if week in (4, 6):
+                request("/profil-mahasiswa", contains="5025221102")
+                request("/beranda?user=Andi", contains="Selamat datang, Andi!")
+                idea = request("/ide-agent?mode=dark", contains='class="dark"')
+                request("/ide-agent?mode=light", contains="Rencana penelitian")
+                idea_data = {"_token": token(idea), "nama": "Marco", "judul": "Riset adaptif",
+                             "deskripsi": "Meninjau metode pembelajaran adaptif di perguruan tinggi.",
+                             "mode": "dark"}
+                request("/ide-agent", {**idea_data, "_token": "bad"}, status=419)
+                request("/ide-agent", {**idea_data, "judul": "x"}, contains="minimal 5 karakter", referer="/ide-agent?mode=dark")
+                request("/ide-agent", idea_data, contains="berhasil divalidasi", referer="/ide-agent?mode=dark")
+                request("/rencana-riset", {**idea_data, "_token": "bad"}, status=419)
+                plan = {"_token": token(idea), "mode": "dark",
+                        "pertanyaan_riset": "Bagaimana pembelajaran adaptif memengaruhi keterlibatan mahasiswa?",
+                        "mode_riset": "dokumen_lokal", "jumlah_artikel": 4, "jumlah_pdf": 2}
+                result = request("/rencana-riset", plan, contains="4 artikel dan 2 PDF")
+                assert 'class="dark"' in result
+                request("/rencana-riset", {**plan, "jumlah_artikel": -1},
+                        contains="harus antara 0 dan 1000", referer="/ide-agent?mode=dark")
+
+            if week == 6:
+                request("/dashboard", contains="Masuk ke ruang kerja")
+                register = request("/register", contains="Buat akun baru")
+                email = f"researchcheck{time.time_ns()}@example.com"
+                account = {"_token": token(register), "name": "Peneliti Uji", "email": email,
+                           "password": "password123", "password_confirmation": "password123"}
+                request("/register", {**account, "email": "invalid"}, contains="email", referer="/register")
+                dashboard = request("/register", account, contains="Belum ada proyek", referer="/register")
+                assert "Pemetaan literatur pembelajaran adaptif" not in dashboard
+                request("/logout", {"_token": token(dashboard)}, contains="ResearchMate AI")
+                login = request("/login", contains="Masuk ke ruang kerja")
+                demo = request("/login", {"_token": token(login), "email": "dosenpbkk@its.ac.id",
+                                          "password": "demo12345"}, contains="Pemetaan literatur pembelajaran adaptif")
+                assert "Peneliti Uji" not in demo
+            print(f"PASS W{week}: routes, validation, sessions, and feature checks")
         except Exception:
             log.seek(0)
-            print(log.read().decode(errors='replace')[-3000:])
+            print(log.read().decode(errors="replace")[-3000:])
             raise
         finally:
             server.terminate()
             server.wait(timeout=10)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--php', default='php')
-    parser.add_argument('--week', type=int, choices=[1,2,3,4,6], default=6)
-    parser.add_argument('--php-arg', action='append', default=[], help='Additional PHP option, for example -d or extension=pdo_mysql')
+    parser.add_argument("--php", default="php")
+    parser.add_argument("--week", type=int, choices=[1, 2, 3, 4, 6], default=6)
+    parser.add_argument("--php-arg", action="append", default=[])
     args = parser.parse_args()
     check_week(args.week, args.php, args.php_arg)

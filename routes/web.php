@@ -12,7 +12,7 @@ Route::get('/pengembang', [PageController::class, 'profile'])->name('profile');
 Route::get('/profil-mahasiswa', [PageController::class, 'profile'])->name('profile.legacy');
 Route::get('/ide-agent', [PageController::class, 'idea'])->name('idea');
 Route::post('/ide-agent', [PageController::class, 'store'])->name('idea.store');
-Route::post('/saran-pemain', [PageController::class, 'recommendations'])->name('player.advice');
+Route::post('/rencana-riset', [PageController::class, 'recommendations'])->name('research.plan');
 
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/project-idea', [PageController::class, 'project'])->name('project');

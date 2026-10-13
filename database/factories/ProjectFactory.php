@@ -14,10 +14,10 @@ class ProjectFactory extends Factory
     public function definition(): array
     {
         $topic = fake()->randomElement([
-            ['Pemantau kas sesi', 'Menjelaskan perubahan koin dan membantu instruktur menemukan titik keputusan penting.'],
-            ['Asisten pemakaian bahan', 'Menganalisis stok serta persentase bahan terpakai untuk menilai efisiensi pesanan.'],
-            ['Coach strategi pinjaman', 'Menghubungkan sisa kewajiban dengan kas yang tersedia pada mode Mahir.'],
-            ['Ringkasan sesi pemain', 'Merangkum metrik dan menyusun pertanyaan tindak lanjut untuk diskusi instruktur.'],
+            ['Pemetaan literatur kesehatan digital', 'Meninjau metode dan temuan artikel tentang layanan kesehatan berbasis digital.'],
+            ['Telaah sistem rekomendasi akademik', 'Membandingkan pendekatan rekomendasi dan mengevaluasi kualitas bukti penelitian.'],
+            ['Analisis celah riset pembelajaran adaptif', 'Menyusun matriks literatur untuk mencari pertanyaan yang belum terjawab.'],
+            ['Verifikasi sumber perubahan iklim', 'Mengumpulkan dan memeriksa sumber untuk laporan riset yang dapat ditelusuri.'],
         ]);
 
         return [
