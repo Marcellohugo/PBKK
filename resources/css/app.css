@@ -105,7 +105,7 @@
 
     /* ResearchMate Campus Hero Panel */
     .hero-panel {
-        @apply relative overflow-hidden rounded-xl bg-gradient-to-r from-[#0f172a] via-[#2563eb] to-[#1d4ed8]
+        @apply relative overflow-hidden rounded-xl bg-gradient-to-r from-[#001e3d] via-[#013880] to-[#01408f]
                text-white shadow-sm border border-blue-900/30;
     }
     .hero-panel > * { position: relative; z-index: 1; }

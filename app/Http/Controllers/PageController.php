@@ -11,7 +11,7 @@ class PageController extends Controller
     public function index(Request $request)
     {
         $data = $request->validate(['user' => 'nullable|string|max:100']);
-        return view('home', ['user' => $data['user'] ?? null]);
+        return view('home', ['user' => $data['user'] ?? null, 'profil' => config('profile')]);
     }
 
     public function profile()
