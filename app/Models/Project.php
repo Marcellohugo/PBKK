@@ -10,11 +10,11 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['judul', 'deskripsi', 'tema_agent'];
+    protected $fillable = ['judul', 'deskripsi', 'tema_agent', 'pertanyaan_riset', 'mode_riset', 'jumlah_artikel', 'jumlah_pdf'];
 
     protected function casts(): array
     {
-        return ['api_key_secure' => 'encrypted'];
+        return ['api_key_secure' => 'encrypted', 'jumlah_artikel' => 'integer', 'jumlah_pdf' => 'integer'];
     }
 
     public function user(): BelongsTo

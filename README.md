@@ -1,6 +1,6 @@
-# ResearchMate AI
+# Portal Akademik PBKK
 
-ResearchMate AI adalah ruang kerja penelitian untuk merencanakan pertanyaan riset, meninjau kesiapan literatur, dan melihat proyek yang terhubung dengan akun pengguna. Antarmuka serta alur produk mengacu pada project Researchmate. Tinjauan rencana yang tersedia di aplikasi ini menggunakan aturan dari input pengguna; pembacaan PDF, pencarian artikel otomatis, dan panggilan model AI belum tersedia di implementasi ini.
+Portal Akademik PBKK memuat profil mahasiswa, kalkulator, masukan pengguna, dan ResearchMate AI sebagai proyek riset. Di ResearchMate, pengguna menulis pertanyaan, meninjau kesiapan literatur, masuk atau mendaftar, lalu menyimpan rencana sebagai proyek pribadi. Tinjauan menggunakan aturan dari input pengguna; pembacaan PDF, pencarian artikel otomatis, dan panggilan model AI belum tersedia.
 
 ## Menjalankan lokal
 
@@ -22,10 +22,11 @@ Atur `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` pada 
 ## Fitur
 
 - Registrasi, login, dan dashboard yang hanya menampilkan proyek milik akun aktif, terbaru lebih dulu.
+- Alur rencana riset sampai penyimpanan proyek; draf disimpan dalam sesi ketika pengguna perlu masuk atau mendaftar.
 - Relasi `users`–`projects`, email unik, penghapusan berantai, proteksi mass assignment, dan cast terenkripsi untuk API key.
-- Formulir rencana riset dengan validasi, hasil berbasis input, dan penjelasan bukti angka.
+- Formulir rencana riset dengan validasi, hasil berbasis input, dan penjelasan bukti angka. Pertanyaan serta jumlah sumber disimpan bersama proyek.
 - Formulir masukan dengan validasi server, perlindungan CSRF, pemulihan input lama, dan tantangan matematika berbasis sesi.
-- Halaman profil tim, konsep produk, kalkulator, dan IPK.
+- Halaman profil mahasiswa, konsep ResearchMate, kalkulator, dan IPK.
 
 Seeder menyediakan 15 akun mahasiswa dengan dua proyek riset per akun serta akun demo dengan dua proyek. `.env`, `vendor/`, dan `node_modules/` diabaikan Git.
 

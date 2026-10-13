@@ -120,18 +120,32 @@ def check_week(week, php, php_args=()):
 
             if week == 6:
                 request("/dashboard", contains="Masuk ke ruang kerja")
-                register = request("/register", contains="Buat akun baru")
+                register = request("/register?next=research", contains="Buat akun baru")
                 email = f"researchcheck{time.time_ns()}@example.com"
                 account = {"_token": token(register), "name": "Peneliti Uji", "email": email,
                            "password": "password123", "password_confirmation": "password123"}
-                request("/register", {**account, "email": "invalid"}, contains="email", referer="/register")
-                dashboard = request("/register", account, contains="Belum ada proyek", referer="/register")
+                request("/register", {**account, "email": "invalid"}, contains="email", referer="/register?next=research")
+                idea = request("/register", account, contains="Simpan rencana ke Proyek Saya", referer="/register?next=research")
+                assert 'class="dark"' in idea
+                dashboard = request("/dashboard", contains="Belum ada proyek")
                 assert "Pemetaan literatur pembelajaran adaptif" not in dashboard
-                request("/logout", {"_token": token(dashboard)}, contains="ResearchMate AI")
-                login = request("/login", contains="Masuk ke ruang kerja")
-                demo = request("/login", {"_token": token(login), "email": "dosenpbkk@its.ac.id",
-                                          "password": "demo12345"}, contains="Pemetaan literatur pembelajaran adaptif")
-                assert "Peneliti Uji" not in demo
+                invalid = request("/ide-agent", {"_token": token(idea), "judul": "x", "deskripsi": "pendek"},
+                                  contains="minimal 5 karakter", referer="/ide-agent")
+                assert "Belum ada proyek" in request("/dashboard")
+                saved = request("/ide-agent", {"_token": token(invalid), "judul": "Peta pembelajaran adaptif pribadi",
+                                                 "deskripsi": "Meninjau dampak pembelajaran adaptif pada mahasiswa."},
+                                contains="berhasil disimpan", referer="/ide-agent")
+                assert "4 artikel" in saved and "2 PDF" in saved
+                assert "Rencana belum disimpan" not in saved
+                request("/logout", {"_token": token(saved)}, contains="ResearchMate AI")
+                guest_form = request("/ide-agent", contains="Rencana penelitian")
+                request("/rencana-riset", {**plan, "_token": token(guest_form)}, contains="4 artikel dan 2 PDF")
+                login = request("/login?next=research", contains="Masuk ke ruang kerja")
+                resumed = request("/login", {"_token": token(login), "email": "dosenpbkk@its.ac.id",
+                                             "password": "demo12345"}, contains="Simpan rencana ke Proyek Saya")
+                assert "4 artikel" in resumed and 'class="dark"' in resumed
+                demo = request("/dashboard", contains="Pemetaan literatur pembelajaran adaptif")
+                assert "Peta pembelajaran adaptif pribadi" not in demo
             print(f"PASS W{week}: routes, validation, sessions, and feature checks")
         except Exception:
             log.seek(0)

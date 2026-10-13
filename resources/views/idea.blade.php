@@ -1,63 +1,105 @@
 @extends('layouts.app')
 @section('title', 'Rencana riset')
 @section('content')
-<div class="grid gap-8 lg:grid-cols-[1.3fr_1fr] lg:items-start">
+<div class="flex flex-wrap items-start justify-between gap-4">
     <div>
         <span class="badge-its">ResearchMate AI</span>
-        <a class="text-link ml-3" href="{{ route('idea', ['mode' => $dark ? 'light' : 'dark']) }}">{{ $dark ? 'Mode terang' : 'Mode gelap' }}</a>
-        <h1 class="mt-4 text-4xl font-extrabold tracking-tight text-slate-950 dark:text-white">Mulai dari pertanyaan yang jelas</h1>
-        <p class="mt-4 max-w-2xl text-slate-600 dark:text-slate-300">Catat arah penelitian dan jumlah sumber yang sudah Anda miliki. Ruang ini memberi panduan awal yang dapat Anda periksa sebelum menelaah artikel dan PDF.</p>
-        <div id="alur" class="mt-8 grid gap-3 sm:grid-cols-2">
-            @foreach($alur as $langkah)
-                <x-info-card :title="$langkah['judul']" :label="'0'.$loop->iteration">{{ $langkah['isi'] }}</x-info-card>
-            @endforeach
-        </div>
-        <div class="mt-8 feature-card">
-            <p class="eyebrow">Alur ResearchMate</p>
-            <h2 class="mt-2 text-xl font-bold">Dari sumber ke kesimpulan</h2>
-            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Dalam platform ResearchMate, artikel dan PDF mendukung matriks literatur, kandidat celah riset, dan laporan dengan rujukan. Form di halaman ini meninjau kesiapan awal dari angka yang Anda masukkan; ia belum membaca dokumen atau menjalankan model AI.</p>
-            <a class="text-link mt-4" href="{{ route('agent') }}">Lihat peran agen riset →</a>
-        </div>
-        <div class="mt-6 feature-card">
-            <p class="eyebrow">Fokus penelitian</p>
-            <h2 class="mt-2 text-xl font-bold">Ajukan ide riset</h2>
-            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Validasi ringkasan ide sebelum dibahas bersama tim. Form ini tidak menyimpan proyek ke daftar akun.</p>
-            @if(session('status'))<x-status-banner type="success" class="mt-4">{{ session('status') }}</x-status-banner>@endif
-            <form method="POST" action="{{ route('idea.store') }}" class="mt-5 space-y-4">
-                @csrf
-                <input type="hidden" name="mode" value="{{ $dark ? 'dark' : 'light' }}">
-                <div><label for="nama" class="text-sm font-semibold">Nama pengusul</label><input id="nama" name="nama" class="field mt-1" value="{{ old('nama') }}" required>@error('nama')<p class="error">{{ $message }}</p>@enderror</div>
-                <div><label for="judul" class="text-sm font-semibold">Judul ide</label><input id="judul" name="judul" class="field mt-1" value="{{ old('judul') }}" required>@error('judul')<p class="error">{{ $message }}</p>@enderror</div>
-                <div><label for="deskripsi" class="text-sm font-semibold">Deskripsi riset</label><textarea id="deskripsi" name="deskripsi" rows="3" class="field mt-1" required>{{ old('deskripsi') }}</textarea>@error('deskripsi')<p class="error">{{ $message }}</p>@enderror</div>
-                <button type="submit" class="button-secondary">Periksa ide</button>
-            </form>
-        </div>
+        <h1 class="mt-4 text-3xl font-extrabold tracking-tight text-slate-950 dark:text-white md:text-4xl">Dari pertanyaan menjadi proyek riset</h1>
+        <p class="mt-3 max-w-3xl text-slate-600 dark:text-slate-300">Tinjau kesiapan sumber, simpan rencana ke akun Anda, lalu lanjutkan dari daftar proyek.</p>
     </div>
+    <a class="text-link" href="{{ route('idea', ['mode' => $dark ? 'light' : 'dark']) }}">{{ $dark ? 'Mode terang' : 'Mode gelap' }}</a>
+</div>
 
-    <div id="demo-saran" class="feature-card scroll-mt-24">
-        <p class="eyebrow">Tinjauan awal</p>
+@if(session('status'))<x-status-banner type="success" class="mt-6">{{ session('status') }}</x-status-banner>@endif
+@if($errors->any())<x-status-banner type="error" class="mt-6">{{ $errors->first() }}</x-status-banner>@endif
+
+<ol id="alur" class="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    @foreach($alur as $langkah)
+        <li class="feature-card">
+            <p class="eyebrow">Langkah {{ $loop->iteration }}</p>
+            <h2 class="mt-2 text-lg font-bold">{{ $langkah['judul'] }}</h2>
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ $langkah['isi'] }}</p>
+        </li>
+    @endforeach
+</ol>
+
+<div class="mt-8 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-start">
+    <section id="demo-saran" class="feature-card scroll-mt-24">
+        <p class="eyebrow">Langkah 1–2 · Mulai di sini</p>
         <h2 class="mt-2 text-2xl font-bold">Rencana penelitian</h2>
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Masukkan pertanyaan dan jumlah sumber yang sudah dicatat. Belum perlu mengunggah dokumen.</p>
         <form method="POST" action="{{ route('research.plan') }}" class="mt-5 space-y-4">
             @csrf
             <input type="hidden" name="mode" value="{{ $dark ? 'dark' : 'light' }}">
-            <div><label for="pertanyaan_riset" class="text-sm font-semibold">Pertanyaan riset</label><textarea id="pertanyaan_riset" name="pertanyaan_riset" rows="4" class="field mt-1" minlength="15" required placeholder="Contoh: Bagaimana metode pembelajaran adaptif memengaruhi keterlibatan mahasiswa?">{{ old('pertanyaan_riset') }}</textarea>@error('pertanyaan_riset')<p class="error">{{ $message }}</p>@enderror</div>
-            <div><label for="mode_riset" class="text-sm font-semibold">Sumber utama</label><select id="mode_riset" name="mode_riset" class="field mt-1" required><option value="dokumen_lokal" @selected(old('mode_riset') === 'dokumen_lokal')>Dokumen lokal</option><option value="penelusuran_literatur" @selected(old('mode_riset') === 'penelusuran_literatur')>Penelusuran literatur</option></select>@error('mode_riset')<p class="error">{{ $message }}</p>@enderror</div>
+            <div>
+                <label for="pertanyaan_riset" class="text-sm font-semibold">Pertanyaan riset</label>
+                <textarea id="pertanyaan_riset" name="pertanyaan_riset" rows="4" class="field mt-1" minlength="15" required placeholder="Contoh: Bagaimana metode pembelajaran adaptif memengaruhi keterlibatan mahasiswa?">{{ old('pertanyaan_riset', $plan['data']['pertanyaan_riset'] ?? '') }}</textarea>
+                @error('pertanyaan_riset')<p class="error">{{ $message }}</p>@enderror
+            </div>
+            <div>
+                <label for="mode_riset" class="text-sm font-semibold">Sumber utama</label>
+                <select id="mode_riset" name="mode_riset" class="field mt-1" required>
+                    <option value="dokumen_lokal" @selected(old('mode_riset', $plan['data']['mode_riset'] ?? 'dokumen_lokal') === 'dokumen_lokal')>Dokumen lokal</option>
+                    <option value="penelusuran_literatur" @selected(old('mode_riset', $plan['data']['mode_riset'] ?? '') === 'penelusuran_literatur')>Penelusuran literatur</option>
+                </select>
+                @error('mode_riset')<p class="error">{{ $message }}</p>@enderror
+            </div>
             <div class="grid gap-4 sm:grid-cols-2">
-                <div><label for="jumlah_artikel" class="text-sm font-semibold">Artikel dicatat</label><input id="jumlah_artikel" name="jumlah_artikel" type="number" min="0" max="1000" class="field mt-1" value="{{ old('jumlah_artikel', 0) }}" required>@error('jumlah_artikel')<p class="error">{{ $message }}</p>@enderror</div>
-                <div><label for="jumlah_pdf" class="text-sm font-semibold">PDF tersedia</label><input id="jumlah_pdf" name="jumlah_pdf" type="number" min="0" max="1000" class="field mt-1" value="{{ old('jumlah_pdf', 0) }}" required>@error('jumlah_pdf')<p class="error">{{ $message }}</p>@enderror</div>
+                <div><label for="jumlah_artikel" class="text-sm font-semibold">Artikel dicatat</label><input id="jumlah_artikel" name="jumlah_artikel" type="number" min="0" max="1000" class="field mt-1" value="{{ old('jumlah_artikel', $plan['data']['jumlah_artikel'] ?? 0) }}" required>@error('jumlah_artikel')<p class="error">{{ $message }}</p>@enderror</div>
+                <div><label for="jumlah_pdf" class="text-sm font-semibold">PDF dicatat</label><input id="jumlah_pdf" name="jumlah_pdf" type="number" min="0" max="1000" class="field mt-1" value="{{ old('jumlah_pdf', $plan['data']['jumlah_pdf'] ?? 0) }}" required>@error('jumlah_pdf')<p class="error">{{ $message }}</p>@enderror</div>
             </div>
-            <button class="button w-full" type="submit">Tinjau rencana</button>
+            <button class="button w-full" type="submit">Tinjau langkah berikutnya</button>
         </form>
-        @if(session('analitika'))
-            <div class="mt-7 border-t border-slate-200 pt-6 dark:border-slate-800" aria-live="polite">
-                <h3 class="text-lg font-bold">Langkah berikutnya</h3>
-                <div class="mt-4 space-y-3">
-                    @foreach(session('analitika.saran') as $item)
-                        <article class="rounded-lg border border-blue-100 bg-blue-50/60 p-4 dark:border-slate-700 dark:bg-slate-800/60"><h4 class="font-bold">{{ $item['judul'] }}</h4><p class="mt-1 text-xs font-semibold text-blue-800 dark:text-blue-300">{{ $item['bukti'] }}</p><p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ $item['isi'] }}</p></article>
-                    @endforeach
-                </div>
+    </section>
+
+    <section id="hasil" class="feature-card scroll-mt-24" aria-live="polite">
+        <p class="eyebrow">Langkah 3 · Hasil tinjauan</p>
+        <h2 class="mt-2 text-2xl font-bold">Apa yang perlu dilakukan?</h2>
+        @if($plan)
+            <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ $plan['data']['jumlah_artikel'] }} artikel dan {{ $plan['data']['jumlah_pdf'] }} PDF dicatat untuk pertanyaan ini. Periksa sumber asli sebelum memakai hasilnya.</p>
+            <div class="mt-5 space-y-3">
+                @foreach($plan['saran'] as $item)
+                    <article class="rounded-lg border border-blue-100 bg-blue-50/60 p-4 dark:border-slate-700 dark:bg-slate-800/60">
+                        <h3 class="font-bold">{{ $item['judul'] }}</h3>
+                        <p class="mt-1 text-xs font-semibold text-blue-800 dark:text-blue-300">{{ $item['bukti'] }}</p>
+                        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">{{ $item['isi'] }}</p>
+                    </article>
+                @endforeach
             </div>
+            <a class="text-link mt-5" href="#simpan-proyek">Lanjut simpan proyek →</a>
+        @else
+            <p class="mt-3 text-sm text-slate-600 dark:text-slate-300">Isi formulir di samping untuk melihat tinjauan awal. Hasilnya akan muncul di sini sebelum Anda menyimpan proyek.</p>
         @endif
-    </div>
+    </section>
 </div>
+
+@if($plan)
+<section id="simpan-proyek" class="feature-card mt-8 scroll-mt-24 border-t-3 border-t-[#f8ac18]">
+    <p class="eyebrow">Langkah 4 · Lanjutkan proyek</p>
+    <h2 class="mt-2 text-2xl font-bold">Simpan rencana ke Proyek Saya</h2>
+    @auth
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Beri judul dan ringkasan. Pertanyaan serta jumlah sumber di atas akan ikut tersimpan pada akun {{ auth()->user()->name }}.</p>
+        <form method="POST" action="{{ route('idea.store') }}" class="mt-5 grid gap-4 md:grid-cols-2">
+            @csrf
+            <input type="hidden" name="mode" value="{{ $dark ? 'dark' : 'light' }}">
+            <div><label for="judul" class="text-sm font-semibold">Judul proyek</label><input id="judul" name="judul" class="field mt-1" value="{{ old('judul', $draft['judul'] ?? '') }}" minlength="5" maxlength="150" required>@error('judul')<p class="error">{{ $message }}</p>@enderror</div>
+            <div><label for="deskripsi" class="text-sm font-semibold">Ringkasan proyek</label><textarea id="deskripsi" name="deskripsi" rows="3" class="field mt-1" minlength="15" maxlength="3000" required>{{ old('deskripsi', $draft['deskripsi'] ?? $plan['data']['pertanyaan_riset']) }}</textarea>@error('deskripsi')<p class="error">{{ $message }}</p>@enderror</div>
+            <div class="md:col-span-2"><button class="button" type="submit">Simpan proyek ke akun</button></div>
+        </form>
+    @else
+        <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Rencana ini sementara tersimpan di sesi browser. Masuk atau buat akun untuk memberi judul, menyimpannya, dan melihatnya di Proyek Saya.</p>
+        <div class="mt-5 flex flex-wrap gap-3">
+            <a class="button" href="{{ route('login', ['next' => 'research']) }}">Masuk untuk menyimpan</a>
+            <a class="button-secondary" href="{{ route('register', ['next' => 'research']) }}">Buat akun</a>
+        </div>
+    @endauth
+</section>
+@endif
+
+<section class="feature-card mt-8">
+    <p class="eyebrow">Cara kerja saat ini</p>
+    <h2 class="mt-2 text-xl font-bold">Tinjauan awal yang dapat diperiksa</h2>
+    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Saran di halaman ini dibuat dari pertanyaan dan jumlah sumber yang Anda masukkan. Aplikasi belum membaca isi PDF atau menjalankan model AI; tinjau dokumen asli sebelum membuat kesimpulan.</p>
+    <a class="text-link mt-4" href="{{ route('agent') }}">Lihat rancangan peran agen →</a>
+</section>
 @endsection

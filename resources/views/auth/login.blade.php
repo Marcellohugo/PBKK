@@ -4,7 +4,7 @@
 <div class="mx-auto max-w-md">
     <p class="eyebrow">Akun ResearchMate</p>
     <h1 class="mt-2 text-3xl font-extrabold tracking-tight">Masuk ke ruang kerja</h1>
-    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Akses proyek dan analitika yang terhubung dengan akun Anda.</p>
+    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Masuk untuk menyimpan rencana riset dan membuka proyek milik akun Anda.</p>
     <form method="POST" action="{{ route('login') }}" class="feature-card mt-6 space-y-5 p-6">
         @csrf
         <div><label for="email" class="text-sm font-semibold">Email</label><input id="email" class="field" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username">@error('email')<p class="error">{{ $message }}</p>@enderror</div>

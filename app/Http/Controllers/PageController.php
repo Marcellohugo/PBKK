@@ -30,14 +30,15 @@ class PageController extends Controller
             'mode' => ['nullable', Rule::in(['light', 'dark'])],
         ]);
         $dark = $request->query('mode') === 'dark';
-        $profil = config('profile');
         $alur = [
             ['judul' => 'Pertanyaan riset', 'isi' => 'Tulis pertanyaan yang hendak dijawab dan pilih sumber awal.'],
             ['judul' => 'Inventaris sumber', 'isi' => 'Catat jumlah artikel dan PDF yang sudah dikumpulkan.'],
             ['judul' => 'Tinjauan kesiapan', 'isi' => 'Aplikasi menampilkan langkah berikutnya berdasarkan input yang tersedia.'],
-            ['judul' => 'Verifikasi peneliti', 'isi' => 'Periksa sumber asli sebelum menyusun klaim atau laporan.'],
+            ['judul' => 'Simpan proyek', 'isi' => 'Masuk ke akun untuk menyimpan rencana dan meninjau proyek Anda.'],
         ];
-        return view('idea', compact('profil', 'dark', 'alur'));
+        $plan = $request->session()->get('research_plan');
+        $draft = $request->session()->get('research_idea');
+        return view('idea', compact('dark', 'alur', 'plan', 'draft'));
     }
 
     public function recommendations(Request $request)
@@ -82,14 +83,14 @@ class PageController extends Controller
                 'isi' => 'Bandingkan metode dan hasil sumber yang relevan. Kandidat celah riset perlu dukungan kutipan yang dapat diperiksa.',
             ],
         ];
-        return redirect()->route('idea', ['mode' => $data['mode'] ?? 'light'])
-            ->with('analitika', ['data' => $data, 'saran' => $saran])->withInput($request->except('_token'));
+        $request->session()->put('research_plan', ['data' => $data, 'saran' => $saran]);
+        return redirect()->to(route('idea', ['mode' => $data['mode'] ?? 'light']).'#hasil');
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nama' => 'required|string|min:3|max:100',
+            'nama' => $request->user() ? 'nullable|string|min:3|max:100' : 'required|string|min:3|max:100',
             'judul' => 'required|string|min:5|max:150',
             'deskripsi' => 'required|string|min:15|max:3000',
             'mode' => ['nullable', Rule::in(['light', 'dark'])],
@@ -100,9 +101,35 @@ class PageController extends Controller
             'max' => ':attribute maksimal :max karakter.',
             'in' => 'Pilihan :attribute tidak valid.',
         ], ['nama' => 'Nama pengusul', 'judul' => 'Judul ide', 'deskripsi' => 'Deskripsi', 'mode' => 'mode']);
-        return redirect()->route('idea', ['mode' => $data['mode'] ?? 'light'])
-            ->with('status', "Terima kasih, {$data['nama']}. Ide riset {$data['judul']} berhasil divalidasi.")
-            ->with('ide', $data);
+        if (! $request->user()) {
+            $request->session()->put('research_idea', $data);
+            $next = $request->session()->has('research_plan')
+                ? 'Masuk untuk menyimpannya.'
+                : 'Tinjau rencana riset untuk melanjutkan penyimpanan.';
+            return redirect()->route('idea', ['mode' => $data['mode'] ?? 'light'])
+                ->with('status', "Terima kasih, {$data['nama']}. Ide riset {$data['judul']} berhasil divalidasi. {$next}")
+                ->with('ide', $data);
+        }
+
+        $plan = $request->session()->get('research_plan.data');
+        if (! $plan) {
+            return redirect()->route('idea', ['mode' => $data['mode'] ?? 'light'])
+                ->withErrors(['judul' => 'Tinjau rencana riset terlebih dahulu sebelum menyimpan proyek.'])
+                ->withInput();
+        }
+
+        $project = $request->user()->projects()->create([
+            'judul' => $data['judul'],
+            'deskripsi' => $data['deskripsi'],
+            'tema_agent' => config('profile.tema'),
+            'pertanyaan_riset' => $plan['pertanyaan_riset'],
+            'mode_riset' => $plan['mode_riset'],
+            'jumlah_artikel' => $plan['jumlah_artikel'],
+            'jumlah_pdf' => $plan['jumlah_pdf'],
+        ]);
+        $request->session()->forget(['research_plan', 'research_idea']);
+
+        return redirect()->route('dashboard.home')->with('status', "Proyek {$project->judul} berhasil disimpan.");
     }
     public function about() { return view('about'); }
 

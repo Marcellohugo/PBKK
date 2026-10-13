@@ -14,8 +14,13 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
+        if ($request->query('next') === 'research') {
+            $mode = $request->session()->get('research_plan.data.mode', 'light');
+            $request->session()->put('url.intended', route('idea', ['mode' => $mode]).'#simpan-proyek');
+        }
+
         return view('auth.login');
     }
 
