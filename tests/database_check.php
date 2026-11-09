@@ -12,7 +12,7 @@ $app->make(Kernel::class)->bootstrap();
 function check(bool $ok, string $message): void
 {
     if (! $ok) {
-        fwrite(STDERR, "FAIL W6: {$message}\n");
+        fwrite(STDERR, "FAIL W10: {$message}\n");
         exit(1);
     }
 }
@@ -20,6 +20,11 @@ function check(bool $ok, string $message): void
 check(User::where('email', 'like', '%@student.its.ac.id')->has('projects', '=', 2)->count() >= 15, 'Seeder mahasiswa/proyek tidak lengkap.');
 $demo = User::where('email', 'dosenpbkk@its.ac.id')->firstOrFail();
 check($demo->projects()->count() === 2, 'Proyek demo tidak lengkap.');
+check(\Spatie\Permission\Models\Role::whereIn('name', ['Admin', 'Staf'])->count() === 2, 'Role Admin/Staf tidak lengkap.');
+$admin = User::where('email', 'admin@researchmate.local')->firstOrFail();
+$staff = User::where('email', 'staf@researchmate.local')->firstOrFail();
+check($admin->hasRole('Admin') && $admin->can('projects.delete'), 'Izin Admin tidak lengkap.');
+check($staff->hasRole('Staf') && ! $staff->can('projects.delete'), 'Staf memiliki izin hapus.');
 
 $project = new Project;
 $project->fill(['judul' => 'Uji', 'user_id' => $demo->id, 'api_key_secure' => 'rahasia']);
@@ -44,4 +49,4 @@ try {
     DB::rollBack();
 }
 
-echo "PASS W6: seed, relasi, mass assignment, enkripsi, default, cascade\n";
+echo "PASS W10: seed, role, permission, relasi, mass assignment, enkripsi, default, cascade\n";

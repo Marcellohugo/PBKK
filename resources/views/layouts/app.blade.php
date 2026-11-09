@@ -30,6 +30,9 @@
             <a href="{{ route('feedback.create') }}" @if(request()->routeIs('feedback.*')) aria-current="page" @endif>Masukan</a>
             @auth
                 <a href="{{ route('dashboard.home') }}" @if(request()->routeIs('dashboard.home', 'dashboard.project.show')) aria-current="page" @endif>Proyek saya</a>
+                @if(auth()->user()->hasAnyRole(['Admin', 'Staf']))
+                    <a href="{{ route('admin.dashboard') }}">Panel admin</a>
+                @endif
             @endauth
             @auth
                 <form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="rounded-md px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800">Keluar</button></form>

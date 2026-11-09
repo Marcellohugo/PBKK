@@ -12,6 +12,16 @@
         <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="remember" class="accent-[#013880]"> Ingat saya</label>
         <button class="button w-full" type="submit">Masuk</button>
     </form>
+    @if(app()->environment('local') && in_array(request()->ip(), ['127.0.0.1', '::1'], true))
+        <div class="feature-card mt-4 p-6">
+            <h2 class="text-sm font-bold">Akun demo lokal</h2>
+            <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">Coba perbedaan akses Admin dan Staf pada dashboard.</p>
+            <div class="mt-4 grid gap-2 sm:grid-cols-2">
+                <form method="POST" action="{{ route('login.demo', ['role' => 'admin']) }}">@csrf<button class="button w-full" type="submit">Masuk sebagai Admin</button></form>
+                <form method="POST" action="{{ route('login.demo', ['role' => 'staf']) }}">@csrf<button class="button-secondary w-full" type="submit">Masuk sebagai Staf</button></form>
+            </div>
+        </div>
+    @endif
     <p class="mt-5 text-center text-sm text-slate-600 dark:text-slate-300">Belum punya akun? <a class="text-link" href="{{ route('register') }}">Daftar sekarang</a></p>
 </div>
 @endsection

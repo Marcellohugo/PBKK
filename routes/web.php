@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PageController;
 use Illuminate\Support\Facades\Route;
@@ -29,9 +30,18 @@ Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/mahasiswa/{nrp}', [PageController::class, 'student'])->where('nrp', '[0-9]{10}')->name('mahasiswa.show');
     Route::get('/agent/{tema?}', [PageController::class, 'agent'])->name('agent');
 });
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin|Staf'])->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::delete('/projects/{project}', [AdminDashboardController::class, 'destroy'])
+        ->middleware(['role:Admin', 'permission:projects.delete'])
+        ->whereNumber('project')
+        ->name('projects.destroy');
+});
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store'])->name('login.store');
+    Route::post('/login/demo/{role}', [AuthenticatedSessionController::class, 'demo'])
+        ->whereIn('role', ['admin', 'staf'])->name('login.demo');
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store'])->name('register.store');
 });

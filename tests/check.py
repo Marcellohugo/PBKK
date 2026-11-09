@@ -64,7 +64,7 @@ def check_week(week, php, php_args=()):
                         raise RuntimeError("PHP server failed to start")
                     time.sleep(.05)
 
-            if week in (1, 6):
+            if week in (1, 6, 10):
                 home = request("/", contains="ResearchMate AI")
                 assert "Marco Marcello Hugo" in home and "5025221102" in home
                 request("/about", contains="Teknik Informatika ITS")
@@ -74,7 +74,7 @@ def check_week(week, php, php_args=()):
                     request(f"/hitung/10/5/{op}", contains=f"Hasil: {expected}")
                 request("/hitung/10/0/bagi", status=422, contains="Pembagian dengan nol")
 
-            if week in (2, 6):
+            if week in (2, 6, 10):
                 request("/mahasiswa/5025221102", contains="5025221102")
                 request("/mahasiswa/123", status=404)
                 request("/agent", contains="General Assistant Agent")
@@ -88,7 +88,7 @@ def check_week(week, php, php_args=()):
                 routes = json.loads(subprocess.check_output([php, *php_args, "artisan", "route:list", "--json"], cwd=ROOT))
                 assert all(route["name"] for route in routes if not route["uri"].startswith("storage/"))
 
-            if week in (3, 6):
+            if week in (3, 6, 10):
                 form = request("/feedback", contains="Masukan pengguna")
                 a, b = map(int, re.search(r"Berapakah (\d+) \+ (\d+)\?", form).groups())
                 data = {"_token": token(form), "nama": "Marco Marcello Hugo", "email": "marco@student.its.ac.id",
@@ -104,7 +104,7 @@ def check_week(week, php, php_args=()):
                 body = request("/feedback", data, contains="Masukan berhasil divalidasi", referer="/feedback")
                 assert "Literatur perlu rujukan" in body
 
-            if week in (4, 6):
+            if week in (4, 6, 10):
                 request("/profil-mahasiswa", contains="5025221102")
                 request("/beranda?user=Andi", contains="Selamat datang, Andi!")
                 idea = request("/ide-agent?mode=dark", contains='class="dark"')
@@ -124,7 +124,7 @@ def check_week(week, php, php_args=()):
                 request("/rencana-riset", {**plan, "jumlah_artikel": -1},
                         contains="harus antara 0 dan 1000", referer="/ide-agent?mode=dark")
 
-            if week == 6:
+            if week in (6, 10):
                 request("/dashboard", contains="Masuk ke ruang kerja")
                 register = request("/register?next=research", contains="Buat akun baru")
                 email = f"researchcheck{time.time_ns()}@example.com"
@@ -175,6 +175,32 @@ def check_week(week, php, php_args=()):
                 reset = request("/rencana-riset/baru", {"_token": token(demo)}, contains="Rencana penelitian", referer="/dashboard")
                 assert "Simpan rencana ke Proyek Saya" not in reset
                 assert "Rencana belum disimpan" not in request("/dashboard")
+            if week == 10:
+                request("/admin/dashboard", status=403)
+                request("/logout", {"_token": token(demo)}, contains="ResearchMate AI")
+                request("/admin/dashboard", contains="Masuk ke ruang kerja")
+                login = request("/login", contains="Masuk sebagai Admin")
+                admin = request("/login/demo/admin", {"_token": token(login)}, contains="Dashboard Riset", referer="/login")
+                for label in ("Pengguna", "Proyek riset", "Masukan", "Hapus Data"):
+                    assert label in admin
+                filtered = request("/admin/dashboard?q=a", contains="Daftar proyek riset")
+                assert "q=a" in re.search(r'href="([^"]*page=2[^"]*)"', filtered).group(1)
+                project_id = project_path.rsplit("/", 1)[1]
+                target = f"/admin/projects/{project_id}"
+                request("/logout", {"_token": token(admin)}, contains="ResearchMate AI")
+                login = request("/login", contains="Masuk sebagai Staf")
+                staff = request("/login/demo/staf", {"_token": token(login)}, contains="Dashboard Riset", referer="/login")
+                assert "Hapus Data" not in staff
+                request(target, {"_token": token(staff), "_method": "DELETE"}, status=403, referer="/admin/dashboard")
+                request("/admin/dashboard?q=Peta%20pembelajaran%20adaptif%20pribadi",
+                        contains="Peta pembelajaran adaptif pribadi")
+                request("/logout", {"_token": token(staff)}, contains="ResearchMate AI")
+                login = request("/login", contains="Masuk sebagai Admin")
+                admin = request("/login/demo/admin", {"_token": token(login)}, contains="Dashboard Riset", referer="/login")
+                request(target, {"_token": token(admin), "_method": "DELETE"},
+                        contains="Proyek berhasil dihapus", referer="/admin/dashboard")
+                request("/admin/dashboard?q=Peta%20pembelajaran%20adaptif%20pribadi",
+                        contains="Tidak ada proyek yang cocok dengan pencarian.")
             print(f"PASS W{week}: routes, validation, sessions, and feature checks")
         except Exception:
             log.seek(0)
@@ -194,7 +220,7 @@ def check_week(week, php, php_args=()):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--php", default="php")
-    parser.add_argument("--week", type=int, choices=[1, 2, 3, 4, 6], default=6)
+    parser.add_argument("--week", type=int, choices=[1, 2, 3, 4, 6, 10], default=10)
     parser.add_argument("--php-arg", action="append", default=[])
     args = parser.parse_args()
     check_week(args.week, args.php, args.php_arg)

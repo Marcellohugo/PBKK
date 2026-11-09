@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +34,29 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard.home', absolute: false));
+        $home = $request->user()->hasAnyRole(['Admin', 'Staf'])
+            ? route('admin.dashboard', absolute: false)
+            : route('dashboard.home', absolute: false);
+
+        return redirect()->intended($home);
+    }
+
+    public function demo(Request $request, string $role): RedirectResponse
+    {
+        abort_unless(app()->environment('local') && in_array($request->ip(), ['127.0.0.1', '::1'], true), 404);
+
+        $email = match ($role) {
+            'admin' => 'admin@researchmate.local',
+            'staf' => 'staf@researchmate.local',
+            default => abort(404),
+        };
+        $user = User::where('email', $email)->firstOrFail();
+        abort_unless($user->hasRole(ucfirst($role)), 403);
+
+        Auth::login($user);
+        $request->session()->regenerate();
+
+        return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 
     /**

@@ -1,6 +1,6 @@
 # ITS Academic · ResearchMate AI
 
-ITS Academic memuat profil akademik, kalkulator, masukan pengguna, dan ResearchMate AI untuk merencanakan riset. Di ResearchMate, pengguna menulis pertanyaan, meninjau kesiapan literatur, masuk atau mendaftar, lalu menyimpan rencana sebagai proyek pribadi yang dapat dibuka lagi. Tinjauan menggunakan aturan dari input pengguna; pembacaan PDF, pencarian artikel otomatis, dan panggilan model AI belum tersedia.
+ITS Academic memuat profil akademik, kalkulator, masukan pengguna, dan ResearchMate AI untuk merencanakan riset. Pengguna menulis pertanyaan, meninjau kesiapan literatur, lalu menyimpan rencana sebagai proyek pribadi. Panel AdminLTE membantu Admin dan Staf memantau proyek dengan hak akses berbeda. Tinjauan ResearchMate masih berbasis aturan dari input pengguna; pembacaan PDF, pencarian artikel otomatis, dan panggilan model AI belum tersedia.
 
 ## Menjalankan lokal
 
@@ -13,11 +13,20 @@ Copy-Item .env.example .env
 php artisan key:generate
 php artisan migrate --seed
 npm ci
+php artisan adminlte:install --only=assets --only=vendor_assets --only=translations
 npm run build
-php artisan serve --host=127.0.0.1 --port=8006
+php artisan serve --host=127.0.0.1 --port=8010
 ```
 
-Atur `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` pada `.env` bila memakai PostgreSQL lain. Di komputer pengembangan ini, `. .\dev-env.ps1` mengaktifkan runtime PHP dan ekstensi PostgreSQL. Akun data contoh: `dosenpbkk@its.ac.id` dengan kata sandi `demo12345`; gunakan hanya untuk pengembangan lokal.
+Atur `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` pada `.env` bila memakai PostgreSQL lain. Di komputer pengembangan ini, `. .\dev-env.ps1` mengaktifkan runtime PHP dan ekstensi PostgreSQL. Jalankan `php artisan adminlte:status` untuk memeriksa aset panel yang sudah disertakan. Buka `/admin/dashboard` setelah masuk sebagai Admin atau Staf.
+
+| Akun uji lokal | Email | Kata sandi | Akses |
+| --- | --- | --- | --- |
+| Admin | `admin@researchmate.local` | `demo12345` | Lihat semua proyek dan hapus data |
+| Staf | `staf@researchmate.local` | `demo12345` | Lihat dan cari proyek, tanpa hapus |
+| Peneliti | `dosenpbkk@its.ac.id` | `demo12345` | Proyek pribadi |
+
+Pada lingkungan `local` di `127.0.0.1`, halaman login menyediakan tombol masuk instan Admin dan Staf. Seeder hanya membuat akun dan proyek contoh pada lingkungan `local`; pada lingkungan lain ia hanya menyiapkan role dan permission. Untuk memberi peran pada akun nyata setelah registrasi, jalankan `php artisan tinker` lalu `\App\Models\User::where('email', 'alamat@domain')->firstOrFail()->assignRole('Admin');` (atau `Staf`).
 
 ## Fitur
 
@@ -27,14 +36,17 @@ Atur `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` pada 
 - Formulir rencana riset dengan validasi, hasil berbasis input, dan penjelasan bukti angka. Pertanyaan serta jumlah sumber disimpan bersama proyek.
 - Formulir masukan dengan validasi server, perlindungan CSRF, pemulihan input lama, dan tantangan matematika berbasis sesi.
 - Halaman profil mahasiswa, konsep ResearchMate, kalkulator, dan IPK.
+- Panel AdminLTE dengan autentikasi bergaya Laravel Breeze, role dan permission Spatie, tiga statistik `count()` dari database, tabel proyek dengan pencarian `when()` dan pagination yang mempertahankan kueri, serta penghapusan khusus Admin pada tampilan dan server.
 
-Seeder menyediakan 15 akun mahasiswa dengan dua proyek riset per akun serta akun demo dengan dua proyek. `.env`, `vendor/`, dan `node_modules/` diabaikan Git.
+Seeder lokal menyediakan 15 akun mahasiswa dengan dua proyek riset per akun serta akun demo. `.env`, `vendor/`, dan `node_modules/` diabaikan Git.
+
+![Dashboard Admin ResearchMate](docs/images/admin-dashboard.jpg)
 
 ## Verifikasi
 
 ```powershell
 php tests/database_check.php
-python tests/check.py --php C:\path\to\php.exe
+python tests/check.py --week 10 --php C:\path\to\php.exe
 ```
 
 Lihat [batas fitur saat ini](docs/researchmate.md) untuk perbedaan antara konsep platform ResearchMate dan fitur yang sudah dapat dijalankan di aplikasi ini.
