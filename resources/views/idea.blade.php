@@ -110,7 +110,7 @@
 <section class="feature-card mt-8">
     <p class="eyebrow">Cara kerja saat ini</p>
     <h2 class="mt-2 text-xl font-bold">Tinjauan awal yang dapat diperiksa</h2>
-    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Saran di halaman ini dibuat dari pertanyaan dan jumlah sumber yang Anda masukkan. Aplikasi belum membaca isi PDF atau menjalankan model AI; tinjau dokumen asli sebelum membuat kesimpulan.</p>
+    <p class="mt-2 text-sm text-slate-600 dark:text-slate-300">Saran di halaman ini dibuat dari pertanyaan dan jumlah sumber yang Anda masukkan. Layanan chat AI tersedia melalui API terproteksi; formulir ini belum membaca isi PDF. Tinjau dokumen asli sebelum membuat kesimpulan.</p>
     <a class="text-link mt-4" href="{{ route('agent') }}">Lihat rancangan peran agen →</a>
 </section>
 @endsection
