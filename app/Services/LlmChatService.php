@@ -142,7 +142,10 @@ class LlmChatService
             $payload['options'] = ['temperature' => 0.2, 'num_predict' => (int) config('llm.max_tokens', 512)];
             $payload['think'] = false;
         } else {
-            $url = config('llm.senopati.url');
+            $url = rtrim(config('llm.senopati.url'), '/');
+            if (! str_ends_with($url, '/chat/completions')) {
+                $url .= '/chat/completions';
+            }
             $client = $client->withToken(config('llm.senopati.key'));
             $payload['temperature'] = 0.2;
             $payload['max_tokens'] = (int) config('llm.max_tokens', 512);

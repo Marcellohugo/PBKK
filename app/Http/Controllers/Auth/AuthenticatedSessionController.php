@@ -43,7 +43,7 @@ class AuthenticatedSessionController extends Controller
 
     public function demo(Request $request, string $role): RedirectResponse
     {
-        abort_unless(app()->environment('local') && in_array($request->ip(), ['127.0.0.1', '::1'], true), 404);
+        abort_unless(app()->environment('local') && (config('app.local_demo_login') || in_array($request->ip(), ['127.0.0.1', '::1'], true)), 404);
 
         $email = match ($role) {
             'admin' => 'admin@researchmate.local',

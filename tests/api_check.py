@@ -30,6 +30,10 @@ class Providers(BaseHTTPRequestHandler):
         pass
 
     def do_POST(self):
+        if self.path not in ("/api/chat", "/llm-gateway/v1/chat/completions"):
+            self.send_response(404)
+            self.end_headers()
+            return
         provider = "ollama" if self.path == "/api/chat" else "senopati"
         body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
         self.calls.append((provider, body, self.headers.get("Authorization")))
@@ -110,7 +114,7 @@ def check_api(php, php_args):
                    CACHE_STORE="array", SESSION_DRIVER="array",
                    APP_CONFIG_CACHE=str(temp / "config.php"),
                    OLLAMA_URL=f"http://127.0.0.1:{fixtures.server_port}", OLLAMA_MODEL="ollama-test",
-                   SENOPATI_URL=f"http://127.0.0.1:{fixtures.server_port}/v1/chat/completions",
+                   SENOPATI_URL=f"http://127.0.0.1:{fixtures.server_port}/llm-gateway/v1/",
                    SENOPATI_API_KEY="fixture-key", SENOPATI_MODEL="senopati-test")
         command = [php, *php_args]
 
@@ -214,6 +218,11 @@ def check_api(php, php_args):
                 fallback = json_request("/api/chat-ai", {"prompt": "Uji fallback"}, token, status=201)["data"]
                 assert fallback["provider"] == "senopati" and fallback["tokens_used"] == 17
                 assert Providers.calls[-1][2] == "Bearer fixture-key"
+                full_url = env["SENOPATI_URL"].rstrip("/") + "/chat/completions/"
+                legacy = json.loads(php_code(
+                    "config(['llm.senopati.url'=>'" + full_url + "']); "
+                    "echo json_encode(app(\\App\\Services\\LlmChatService::class)->complete('Uji URL lengkap'));"))
+                assert legacy["provider"] == "senopati" and legacy["answer"] == "Fallback teruji"
                 events = stream(token)
                 assert events[-1][0] == "done" and events[-1][1]["data"]["provider"] == "senopati"
                 assert count_logs() == 4

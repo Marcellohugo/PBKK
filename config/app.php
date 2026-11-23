@@ -28,6 +28,8 @@ return [
 
     'env' => env('APP_ENV', 'production'),
 
+    'local_demo_login' => (bool) env('LOCAL_DEMO_LOGIN', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode
@@ -97,7 +99,9 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    'key' => env('APP_KEY'),
+    'key' => env('APP_KEY') ?: (is_readable(storage_path('app/docker-app-key'))
+        ? trim(file_get_contents(storage_path('app/docker-app-key')))
+        : null),
 
     'previous_keys' => [
         ...array_filter(

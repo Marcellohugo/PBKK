@@ -94,13 +94,17 @@ Klien harus menunggu `done` sebelum memperlakukan jawaban sebagai riwayat tersim
 | `OLLAMA_MODEL` | Model terpasang, bawaan `qwen3:14b`; boleh diganti model lokal yang tersedia |
 | `LLM_TIMEOUT` | Batas waktu request/provider dalam detik, bawaan 120 |
 | `LLM_MAX_TOKENS` | Batas keluaran model, bawaan 512 |
-| `SENOPATI_URL` | URL penuh endpoint chat completions yang kompatibel OpenAI dari layanan ITS |
-| `SENOPATI_API_KEY` | Token akses ITS, disimpan hanya pada konfigurasi server |
-| `SENOPATI_MODEL` | Nama model yang tersedia bagi akun ITS |
+| `SENOPATI_URL` | Base URL gateway PBKK: `https://senopati.lab-alpro.com/llm-gateway/v1`; URL lengkap berakhiran `/chat/completions` juga diterima |
+| `SENOPATI_API_KEY` | API key Senopati yang sudah ada, disimpan hanya pada konfigurasi server |
+| `SENOPATI_MODEL` | Nama model yang tersedia bagi akun Senopati; contoh teruji `qwen3:14b` |
 
-Fallback Senopati aktif hanya jika ketiga variabel Senopati diisi. Aplikasi mengirim payload `messages`, `model`, dan `stream` serta header Bearer ke URL tersebut. System prompt ResearchMate meminta jawaban akademik yang ringkas, membedakan bukti dari dugaan, dan melarang referensi buatan.
+Fallback Senopati aktif hanya jika URL, key, dan model tersedia. Aplikasi menambahkan `/chat/completions` ke base URL sehingga alamat request menjadi `https://senopati.lab-alpro.com/llm-gateway/v1/chat/completions`. Payload berisi `messages`, `model`, dan `stream`, dengan header Bearer memakai key yang sama. System prompt ResearchMate meminta jawaban akademik yang ringkas, membedakan bukti dari dugaan, dan melarang referensi buatan.
 
-Jika Ollama mati, memberi error, atau menghasilkan respons yang tidak valid sebelum teks pertama, aplikasi mencoba Senopati. Setelah satu delta terkirim, aplikasi tidak berpindah provider agar teks dari dua jawaban tidak tercampur. Tanpa fallback terkonfigurasi, kegagalan ditampilkan sebagai `503` untuk JSON atau event `error` untuk SSE. Endpoint/token Senopati nyata harus diperoleh dari ITS; pengujian terisolasi menggunakan provider fixture dan tidak membuktikan koneksi layanan ITS.
+Jika Ollama mati, memberi error, atau menghasilkan respons yang tidak valid sebelum teks pertama, aplikasi mencoba Senopati. Setelah satu delta terkirim, aplikasi tidak berpindah provider agar teks dari dua jawaban tidak tercampur. Tanpa fallback terkonfigurasi, kegagalan ditampilkan sebagai `503` untuk JSON atau event `error` untuk SSE. Pengujian terisolasi menggunakan provider fixture dan tidak membuktikan koneksi gateway Senopati nyata.
+
+Setelah mengganti domain, jalankan `php artisan config:clear` dan mulai ulang worker/server yang berjalan lama. HTTP 401 dari gateway perlu pemeriksaan API key; HTTP 403 Cloudflare / Error 1010 berarti request ditolak sebelum mencapai layanan model dan perlu pemeriksaan akses oleh pengelola gateway. Tetap gunakan verifikasi TLS.
+
+Jika runtime PHP lokal memberi cURL error 60, atur `curl.cainfo` dan `openssl.cafile` pada `php.ini` aktif (`php --ini`) ke CA bundle resmi dari `https://curl.se/ca/cacert.pem`, lalu mulai ulang PHP. Image Docker sudah memasang sertifikat CA. Jangan menonaktifkan verifikasi HTTPS. Gateway baru telah diuji dengan autentikasi normal memakai `qwen3:14b`, untuk jawaban JSON maupun streaming SSE.
 
 ## Error dan batas request
 

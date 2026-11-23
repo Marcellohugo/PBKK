@@ -1,19 +1,37 @@
+name: pbkk
+
 services:
-  db:
-    image: postgres:16.15
+  app:
+    container_name: pbkk
+    build: .
+    restart: unless-stopped
+    env_file: .env
     environment:
-      POSTGRES_DB: researchmate
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: localw6test
+      APP_ENV: ${APP_ENV:-local}
+      APP_DEBUG: "false"
+      APP_URL: http://127.0.0.1:${APP_PORT:-8011}
+      LOCAL_DEMO_LOGIN: "true"
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+      DB_DATABASE: ${DB_DATABASE:-pbkk}
+      DB_USERNAME: ${DB_USERNAME:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      OLLAMA_URL: http://127.0.0.1:11434
+      OLLAMA_HOST: 127.0.0.1:11434
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen3.5:2b}
     ports:
-      - "127.0.0.1:5436:5432"
+      - "127.0.0.1:${APP_PORT:-8011}:8000"
     volumes:
-      - researchmate_pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d researchmate"]
-      interval: 5s
-      timeout: 3s
-      retries: 10
+      - app_storage:/app/storage
+      - postgres_data:/var/lib/postgresql/data
+      - ollama_models:/root/.ollama
+    stop_grace_period: 90s
 
 volumes:
-  researchmate_pgdata:
+  postgres_data:
+    name: pbkk_postgres_data
+  app_storage:
+    name: pbkk_app_storage
+  ollama_models:
+    name: pbkk_ollama_models

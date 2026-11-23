@@ -6,7 +6,7 @@ return [
         'model' => env('OLLAMA_MODEL', 'qwen3:14b'),
     ],
     'senopati' => [
-        'url' => env('SENOPATI_URL'),
+        'url' => env('SENOPATI_URL', 'https://senopati.lab-alpro.com/llm-gateway/v1'),
         'key' => env('SENOPATI_API_KEY'),
         'model' => env('SENOPATI_MODEL'),
     ],

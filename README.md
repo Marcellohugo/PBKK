@@ -2,14 +2,50 @@
 
 ITS Academic memuat profil akademik, kalkulator, masukan pengguna, dan ResearchMate AI untuk merencanakan riset. Pengguna menulis pertanyaan, meninjau kesiapan literatur, lalu menyimpan rencana sebagai proyek pribadi. Panel AdminLTE membantu Admin dan Staf memantau proyek dengan hak akses berbeda. Backend chat ResearchMate memanggil Ollama atau fallback Senopati melalui API yang dilindungi Sanctum dan menyimpan riwayat jawabannya.
 
-## Menjalankan lokal
+## Menjalankan dengan Docker
 
-Butuh PHP 8.3+ dengan ekstensi `pdo_pgsql`, Composer, Node.js, dan PostgreSQL 16. Konfigurasi contoh menggunakan Docker Compose pada port 5436.
+Aktifkan Docker Desktop, lalu jalankan dari folder project PBKK. Pada salinan baru, buat `.env` dari contoh; pertahankan `.env` yang sudah berisi konfigurasi Anda.
 
 ```powershell
-docker compose up -d --wait
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
+docker compose up -d --build
+```
+
+Buka [http://127.0.0.1:8011](http://127.0.0.1:8011). Satu container bernama `pbkk` memuat aplikasi PHP beserta aset frontend yang sudah dibangun, PostgreSQL, dan Ollama. Database dan Ollama berkomunikasi dengan aplikasi melalui localhost di dalam container. Anda tidak perlu menjalankan PHP, Composer, Node.js, PostgreSQL, atau Ollama pada host.
+
+Branch Git menyimpan versi tugas per minggu. Konfigurasi satu container tersedia mulai `w11`. Untuk memakai versi berikutnya yang mewarisi konfigurasi ini, jalankan `docker compose up -d --build` dari branch tersebut. Docker mengganti aplikasi di container `pbkk` dan memakai kembali volume yang sama. Untuk melihat tugas minggu sebelumnya, buka branch minggu tersebut di Git.
+
+Aplikasi menjalankan migrasi saat mulai. Container menyimpan `APP_KEY` dari `.env` pada volume aplikasi. Jika nilainya kosong, aplikasi memakai key di volume atau membuatnya pada instalasi pertama. Saat memakai worktree baru, pakai kembali konfigurasi database dan Senopati dari `.env` lokal. Untuk mengisi database baru dengan akun contoh, jalankan perintah berikut satu kali.
+
+```powershell
+docker exec pbkk php artisan db:seed --force
+```
+
+Jalankan perintah seed hanya ketika membutuhkan akun contoh; startup biasa tidak mengubah akun atau mengisi ulang data.
+
+Untuk pemakaian berikutnya:
+
+```powershell
+docker start pbkk
+docker stop pbkk
+```
+
+Anda juga dapat memakai tombol Start/Stop untuk container `pbkk` di Docker Desktop. Data PostgreSQL, penyimpanan aplikasi, dan model Ollama tetap ada pada volume Docker saat container berhenti. `docker compose down` dapat digunakan untuk menghapus container sambil mempertahankan volume; nyalakan kembali dengan `docker compose up -d`. Untuk melihat status dan log:
+
+```powershell
+docker compose ps
+docker logs -f pbkk
+```
+
+Isi `SENOPATI_API_KEY` pada `.env` lokal. Compose memasukkannya saat container berjalan; `.env` tidak masuk image maupun Git. Gateway memakai domain `senopati.lab-alpro.com`. Setelah mengubah `.env`, jalankan `docker compose up -d --force-recreate app` agar nilai baru terbaca. Konfigurasi Docker menyertakan sertifikat CA untuk HTTPS.
+
+## Menjalankan tanpa Docker
+
+Alternatif ini membutuhkan PHP 8.3+ dengan ekstensi `pdo_pgsql`, Composer, Node.js, serta PostgreSQL 16 yang berjalan terpisah. Atur `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` pada `.env` sesuai PostgreSQL tersebut.
+
+```powershell
 composer install
-Copy-Item .env.example .env
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
 php artisan key:generate
 php artisan migrate --seed
 npm ci
@@ -18,7 +54,7 @@ npm run build
 php artisan serve --host=127.0.0.1 --port=8011
 ```
 
-Atur `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` pada `.env` bila memakai PostgreSQL lain. Di komputer pengembangan ini, `. .\dev-env.ps1` mengaktifkan runtime PHP dan ekstensi PostgreSQL. Jalankan `php artisan adminlte:status` untuk memeriksa aset panel yang sudah disertakan. Buka `/admin/dashboard` setelah masuk sebagai Admin atau Staf.
+Di komputer pengembangan ini, `. .\dev-env.ps1` mengaktifkan runtime PHP dan ekstensi PostgreSQL. Buka `/admin/dashboard` setelah masuk sebagai Admin atau Staf.
 
 | Akun uji lokal | Email | Kata sandi | Akses |
 | --- | --- | --- | --- |
@@ -26,18 +62,24 @@ Atur `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, dan `DB_PASSWORD` pada 
 | Staf | `staf@researchmate.local` | `demo12345` | Lihat dan cari proyek, tanpa hapus |
 | Peneliti | `dosenpbkk@its.ac.id` | `demo12345` | Proyek pribadi |
 
-Pada lingkungan `local` di `127.0.0.1`, halaman login menyediakan tombol masuk instan Admin dan Staf. Seeder hanya membuat akun dan proyek contoh pada lingkungan `local`; pada lingkungan lain ia hanya menyiapkan role dan permission. Untuk memberi peran pada akun nyata setelah registrasi, jalankan `php artisan tinker` lalu `\App\Models\User::where('email', 'alamat@domain')->firstOrFail()->assignRole('Admin');` (atau `Staf`).
+Pada lingkungan `local` di `127.0.0.1`, halaman login menyediakan tombol masuk instan Admin dan Staf. Container Docker lokal mengaktifkannya melalui `LOCAL_DEMO_LOGIN=true` dan hanya membuka aplikasi pada loopback host. Seeder hanya membuat akun dan proyek contoh pada lingkungan `local`; pada lingkungan lain ia hanya menyiapkan role dan permission. Untuk memberi peran pada akun nyata setelah registrasi, jalankan `php artisan tinker` lalu `\App\Models\User::where('email', 'alamat@domain')->firstOrFail()->assignRole('Admin');` (atau `Staf`).
 
 ## Chat API
 
-Jalankan Ollama dengan model yang sesuai kemampuan mesin, lalu atur `OLLAMA_MODEL` pada `.env`. Contoh model bawaan konfigurasi:
+Pada Docker, Ollama berjalan dengan CPU di dalam container `pbkk`, dan `OLLAMA_MODEL=qwen3.5:2b` direkomendasikan untuk pengembangan lokal. Model disimpan di volume agar tidak diunduh ulang setiap container dimulai. Aplikasi tetap dapat berjalan selama unduhan pertama berlangsung; Senopati menjadi fallback bila sudah dikonfigurasi. Untuk melihat model yang tersedia:
 
 ```powershell
-ollama pull qwen3:14b
+docker exec pbkk ollama list
+```
+
+Untuk cara tanpa Docker, jalankan Ollama pada host dengan model yang sesuai kemampuan mesin, lalu atur `OLLAMA_MODEL` pada `.env`:
+
+```powershell
+ollama pull qwen3.5:2b
 ollama serve
 ```
 
-`OLLAMA_URL` berisi URL dasar Ollama, misalnya `http://127.0.0.1:11434`; aplikasi memakai `/api/chat`. Untuk fallback opsional, isi `SENOPATI_URL` dengan URL penuh endpoint chat completions yang kompatibel OpenAI dari layanan ITS, `SENOPATI_API_KEY`, dan `SENOPATI_MODEL`. Nilai layanan dan token harus berasal dari akses ITS Anda. `LLM_TIMEOUT` membatasi waktu tunggu dan `LLM_MAX_TOKENS` membatasi panjang keluaran.
+`OLLAMA_URL` berisi URL dasar Ollama, yaitu `http://127.0.0.1:11434` pada Docker maupun contoh instalasi host. Aplikasi memakai `/api/chat`. Gateway Senopati PBKK menggunakan `SENOPATI_URL=https://senopati.lab-alpro.com/llm-gateway/v1`, dengan `SENOPATI_API_KEY` yang sama dan `SENOPATI_MODEL` sesuai akses Anda. Aplikasi menambahkan `/chat/completions` secara otomatis; konfigurasi URL lengkap tetap didukung. `LLM_TIMEOUT` membatasi waktu tunggu dan `LLM_MAX_TOKENS` membatasi panjang keluaran. Pada instalasi tanpa Docker, jalankan `php artisan config:clear` dan mulai ulang proses server setelah mengubah `.env`.
 
 Login melalui `POST /api/login`, lalu kirim token Bearer ke `POST /api/chat-ai` atau `POST /api/chat-ai/stream`. Token berlaku satu jam dan dapat dicabut melalui `DELETE /api/token`. Prompt wajib berupa string maksimal 1000 karakter. System prompt mengarahkan jawaban pada riset akademik ResearchMate tanpa mengarang sumber. Riwayat menyimpan pengguna, prompt, jawaban, model, provider, dan penggunaan token. Jumlah token bernilai `null` jika provider tidak mengirim statistik.
 
@@ -68,6 +110,6 @@ python tests/api_check.py --php C:\path\to\php.exe
 
 Pemeriksaan API membuat database SQLite sementara dan provider HTTP pengujian yang terisolasi. Ia memeriksa autentikasi, validasi, pencatatan jawaban, SSE, fallback, dan kegagalan tanpa memakai kuota Senopati. Pengujian provider palsu tidak menggantikan verifikasi koneksi ke Ollama atau Senopati pada lingkungan Anda. Konfigurasi aplikasi tetap menggunakan PostgreSQL secara bawaan.
 
-Chat JSON dan SSE juga telah diuji langsung dengan PostgreSQL 16 dan Ollama `qwen3.5:2b`. Pada komputer ini model tersebut sudah terpasang; set `OLLAMA_MODEL=qwen3.5:2b` untuk menggunakannya. Koneksi Senopati nyata belum diuji karena kredensial ITS belum tersedia.
+Chat JSON dan SSE juga telah diuji langsung dengan PostgreSQL 16 dan Ollama `qwen3.5:2b`. Pada komputer ini model tersebut sudah terpasang; set `OLLAMA_MODEL=qwen3.5:2b` untuk menggunakannya. Pada 19 November 2026, koneksi Senopati terautentikasi ke domain `senopati.lab-alpro.com` berhasil diuji memakai `qwen3:14b`, termasuk fallback JSON dan streaming SSE. Key lokal tidak disertakan di Git.
 
 Lihat [batas fitur saat ini](docs/researchmate.md) untuk perbedaan antara konsep platform ResearchMate dan fitur yang sudah dapat dijalankan di aplikasi ini.

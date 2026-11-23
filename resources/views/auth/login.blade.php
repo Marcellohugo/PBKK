@@ -12,7 +12,7 @@
         <label class="flex items-center gap-2 text-sm"><input type="checkbox" name="remember" class="accent-[#013880]"> Ingat saya</label>
         <button class="button w-full" type="submit">Masuk</button>
     </form>
-    @if(app()->environment('local') && in_array(request()->ip(), ['127.0.0.1', '::1'], true))
+    @if(app()->environment('local') && (config('app.local_demo_login') || in_array(request()->ip(), ['127.0.0.1', '::1'], true)))
         <div class="feature-card mt-4 p-6">
             <h2 class="text-sm font-bold">Akun demo lokal</h2>
             <p class="mt-1 text-xs text-slate-600 dark:text-slate-300">Coba perbedaan akses Admin dan Staf pada dashboard.</p>
