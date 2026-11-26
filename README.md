@@ -83,7 +83,36 @@ ollama serve
 
 Login melalui `POST /api/login`, lalu kirim token Bearer ke `POST /api/chat-ai` atau `POST /api/chat-ai/stream`. Token berlaku satu jam dan dapat dicabut melalui `DELETE /api/token`. Prompt wajib berupa string maksimal 1000 karakter. System prompt mengarahkan jawaban pada riset akademik ResearchMate tanpa mengarang sumber. Riwayat menyimpan pengguna, prompt, jawaban, model, provider, dan penggunaan token. Jumlah token bernilai `null` jika provider tidak mengirim statistik.
 
-Kontrak lengkap, contoh request/response, SSE, serta kode error ada di [dokumentasi API](docs/api.md). Impor [koleksi Postman](docs/postman/researchmate-w11.postman_collection.json) untuk demo login, penolakan tanpa token, chat, streaming, dan pencabutan token. Antarmuka chat Livewire merupakan tahap berikutnya; formulir rencana riset pada portal masih memakai aturan dari input pengguna.
+Kontrak lengkap, contoh request/response, SSE, serta kode error ada di [dokumentasi API](docs/api.md). Impor [koleksi Postman](docs/postman/researchmate-w11.postman_collection.json) untuk demo login, penolakan tanpa token, chat, streaming, dan pencabutan token. Pengguna portal juga dapat membuka **Chat riset** setelah masuk.
+
+## Workspace Chat riset
+
+Buka [Chat riset](http://127.0.0.1:8011/chat) dan masuk dengan akun portal. Pilih **Percakapan baru**, tulis pertanyaan, lalu pilih **Kirim pesan**. Jawaban mengalir ke balon chat. Riwayat di sebelah kiri membuka kembali percakapan milik akun aktif. Jika koneksi AI terputus, **Lanjutkan jawaban** memakai pertanyaan yang sudah tersimpan.
+
+Pada branch `w13`, tabel `chat_conversations` mengikat percakapan ke pengguna. Model `ChatMessage` menyimpan setiap giliran pengguna dan asisten di PostgreSQL sesuai konfigurasi PBKK. Frontend memakai sesi Breeze dan memanggil layanan LLM yang sama dengan API Sanctum. Layanan membawa hingga 12 pesan terdahulu dari percakapan aktif. Panel kanan menyorot blok kode dari jawaban terakhir yang memuat kode.
+
+```mermaid
+flowchart LR
+    A[Login Breeze] --> B[Riwayat percakapan]
+    B -->|select-thread| C[Panel chat Livewire]
+    C -->|prompt| D[(ChatMessage · PostgreSQL)]
+    C --> E[Layanan LLM]
+    E --> F[Ollama]
+    E -->|fallback| G[Senopati]
+    E -->|wire:stream| C
+    C -->|jawaban selesai| D
+    C -->|history-updated| B
+    H[Periksa berkas] --> I[Antrean database]
+    I --> J[Worker pemeriksaan]
+    J --> K[Progres per pengguna]
+    K -->|wire:poll| H
+```
+
+Pada **Periksa berkas**, unggah TXT atau MD hingga 2 MB. Worker di dalam container membaca berkas privat, menghitung jumlah baris dan SHA-256, lalu menghapus salinan kerja. Hasil pemeriksaan tersedia selama satu jam. Untuk instalasi tanpa Docker, jalankan `php artisan queue:work database` di terminal kedua.
+
+![Workspace Chat riset dengan jawaban Ollama, cuplikan Python, dan hasil pemeriksaan berkas](docs/images/chat-workspace.png)
+
+Untuk demo lima menit, masuk dan kirim pertanyaan yang meminta contoh kode Python. Tunjukkan balon jawaban dan panel kode, muat ulang untuk membuka riwayat, lalu periksa satu berkas TXT. Masuk dengan akun kedua untuk menunjukkan pemisahan percakapan.
 
 ## Fitur
 
@@ -107,6 +136,8 @@ php tests/database_check.php
 python tests/check.py --week 10 --php C:\path\to\php.exe
 python tests/api_check.py --php C:\path\to\php.exe
 ```
+
+Uji browser workspace memakai database SQLite sementara dan provider lokal. Setelah memasang Playwright untuk Python (`python -m pip install playwright`, `python -m playwright install chromium`) dan membangun aset, jalankan `python tests/workspace_check.py --php C:\path\to\php.exe`. Pengujian mencakup akses dua akun, konteks percakapan, pemulihan jawaban, panel kode, antrean berkas, serta lebar layar ponsel.
 
 Pemeriksaan API membuat database SQLite sementara dan provider HTTP pengujian yang terisolasi. Ia memeriksa autentikasi, validasi, pencatatan jawaban, SSE, fallback, dan kegagalan tanpa memakai kuota Senopati. Pengujian provider palsu tidak menggantikan verifikasi koneksi ke Ollama atau Senopati pada lingkungan Anda. Konfigurasi aplikasi tetap menggunakan PostgreSQL secara bawaan.
 

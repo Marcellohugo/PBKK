@@ -40,13 +40,13 @@ class LlmChatService
         throw new RuntimeException(self::UNAVAILABLE);
     }
 
-    public function stream(string $prompt): Generator
+    public function stream(string $prompt, array $history = []): Generator
     {
         $emitted = false;
 
         foreach ($this->providers() as $provider) {
             try {
-                $response = $this->request($provider, $prompt, true);
+                $response = $this->request($provider, $prompt, true, $history);
                 $answer = '';
                 $model = null;
                 $tokens = null;
@@ -122,7 +122,7 @@ class LlmChatService
         return $providers;
     }
 
-    private function request(string $provider, string $prompt, bool $stream): Response
+    private function request(string $provider, string $prompt, bool $stream, array $history = []): Response
     {
         $client = Http::acceptJson()
             ->connectTimeout((int) config('llm.connect_timeout', 3))
@@ -132,6 +132,7 @@ class LlmChatService
             'model' => config("llm.{$provider}.model"),
             'messages' => [
                 ['role' => 'system', 'content' => config('llm.system_prompt')],
+                ...$history,
                 ['role' => 'user', 'content' => $prompt],
             ],
             'stream' => $stream,

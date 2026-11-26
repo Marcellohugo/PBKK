@@ -29,6 +29,7 @@
             <a href="{{ route('calculator') }}" @if(request()->routeIs('calculator', 'calculate', 'ipk.*')) aria-current="page" @endif>Kalkulator</a>
             <a href="{{ route('feedback.create') }}" @if(request()->routeIs('feedback.*')) aria-current="page" @endif>Masukan</a>
             @auth
+                <a href="{{ route('chat') }}" @if(request()->routeIs('chat')) aria-current="page" @endif>Chat riset</a>
                 <a href="{{ route('dashboard.home') }}" @if(request()->routeIs('dashboard.home', 'dashboard.project.show')) aria-current="page" @endif>Proyek saya</a>
                 @if(auth()->user()->hasAnyRole(['Admin', 'Staf']))
                     <a href="{{ route('admin.dashboard') }}">Panel admin</a>

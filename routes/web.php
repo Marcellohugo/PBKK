@@ -23,6 +23,7 @@ Route::get('/hitung/{angka1}/{angka2}/{operasi}', [PageController::class, 'calcu
 Route::get('/mahasiswa/{nrp}', [PageController::class, 'student'])->where('nrp', '[0-9]{10}')->name('mahasiswa.show');
 Route::get('/agent/{tema?}', [PageController::class, 'agent'])->name('agent');
 Route::get('/ipk', [PageController::class, 'ipkForm'])->name('ipk.form');
+Route::view('/chat', 'chat')->middleware('auth')->name('chat');
 Route::get('/hitung-ipk/{ip1}/{ip2}', [PageController::class, 'ipk'])->name('ipk.calculate');
 Route::prefix('dashboard')->name('dashboard.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->middleware('auth')->name('home');

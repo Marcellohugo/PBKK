@@ -85,7 +85,9 @@ def check_week(week, php, php_args=()):
                 request("/hitung-ipk/5/4", status=422)
                 request("/dashboard", contains="Masuk ke ruang kerja")
                 request("/missing", status=404)
-                routes = json.loads(subprocess.check_output([php, *php_args, "artisan", "route:list", "--json"], cwd=ROOT))
+                routes = json.loads(subprocess.check_output(
+                    [php, *php_args, "artisan", "route:list", "--except-vendor", "--json"], cwd=ROOT, env=env))
+                assert any(route["name"] == "home" for route in routes)
                 assert all(route["name"] for route in routes if not route["uri"].startswith("storage/"))
 
             if week in (3, 6, 10):
